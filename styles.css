@@ -1,0 +1,151 @@
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.left-side {
+    width: 25%;
+    background-color: #f4f4f4;
+    position: fixed;
+    height: 100vh;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.right-side {
+    margin-left: 25%;
+    width: 75%;
+    height: 100vh;
+    overflow-y: scroll;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group.small {
+    flex: 0 0 auto; /* Prevent stretching */
+}
+
+.input-group.large {
+    flex: 1 0 auto; /* Allow stretching */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="file"] {
+    width: calc(100% - 12px); /* Adjust width considering padding and border */
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.image-label {
+    display: block;
+    width: 100%;
+    padding-top: 100%; /* This maintains the aspect ratio 1:1 (square) */
+    background-color: #e0e0e0;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-text {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+}
+
+.input-group.small input[type="text"] {
+    height: 30px; /* Adjust height as needed */
+}
+
+.input-group.large input[type="text"] {
+    height: 50px; /* Adjust height as needed */
+}
+
+.music-disc-input-div {
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.upload-label {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.upload-label:hover {
+    background-color: #0056b3;
+}
+
+.file-input {
+    display: none;
+}
+
+.add-music-disc-button {
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 36px;
+    text-align: center;
+    line-height: 50px; /* Vertically center the plus sign */
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.add-music-disc-button:hover {
+    background-color: #0056b3;
+}
+
+.download-data-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px; /* Updated to position at the bottom right */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.download-data-button:hover {
+    background-color: #0056b3;
+}
