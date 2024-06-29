@@ -1,3 +1,4 @@
+const unwantedCharactersPattern = /[\s,!]/g;
 // Function to show image preview
 function showImage(event) {
     const input = event.target;
@@ -96,6 +97,7 @@ async function createMusicDiscJson(zip) {
         const name = musicDiscTextInputs[i].value;
         const author = musicDiscTextInputs[i + 1].value;
         const soundFile = musicDiscInputs[i % 2].files[0];
+        const cleanedName = name.replace(unwantedCharactersPattern, '_');
 
         try {
             // Wait for audio duration retrieval
@@ -107,11 +109,11 @@ async function createMusicDiscJson(zip) {
                 description: author.concat(' - ', name),
                 length_in_seconds: duration, // Assign the retrieved duration here
                 sound_event: {
-                    sound_id: `minecraft:music_disc.${name}`
+                    sound_id: `minecraft:music_disc.${cleanedName}`
                 }
             };
 
-            zip.file(`data/new_music/jukebox_song/${name}.json`, JSON.stringify(musicDataJSON, null, 2));
+            zip.file(`data/new_music/jukebox_song/${cleanedName}.json`, JSON.stringify(musicDataJSON, null, 2));
         } catch (error) {
             console.error('Error while loading audio:', error);
             // Handle error as needed
@@ -131,7 +133,7 @@ async function createMusicDiscJson(zip) {
                         name: `records/music_disc_${index + 1}_${nameUsed}`
                     };
 
-                    const musicDiscName = `music_disc.${musicDiscTextInputs[index * 2].value}`;
+                    const musicDiscName = `music_disc.${musicDiscTextInputs[index * 2].value.replace(unwantedCharactersPattern, '_')}`;
                     if (!musicDiscData[musicDiscName]) {
                         musicDiscData[musicDiscName] = { sounds: [] };
                     }
