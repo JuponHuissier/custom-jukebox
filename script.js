@@ -1,4 +1,5 @@
-const unwantedCharactersPattern = /[\s,!]/g;
+const wantedCharacters = 'a-zA-Z0-9 ';
+const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
 // Function to show image preview
 function showImage(event) {
     const input = event.target;
@@ -102,6 +103,7 @@ async function createMusicDiscJson(zip) {
         try {
             // Wait for audio duration retrieval
             const duration = await getAudioDuration(soundFile);
+            console.log('Duration:', duration, 'seconds');
 
             const musicDataJSON = {
                 comparator_output: 1,
