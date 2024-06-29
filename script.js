@@ -102,7 +102,6 @@ async function createMusicDiscJson(zip) {
         try {
             // Wait for audio duration retrieval
             const duration = await getAudioDuration(soundFile);
-            console.log('Duration:', duration, 'seconds');
 
             const musicDataJSON = {
                 comparator_output: 1,
