@@ -16,19 +16,19 @@
                         <span class="upload-text">Upload Image</span>
                     </div>
                 </label>
-                <input type="file" id="image" name="image" accept="image/*" onchange="showImage(event)">
+                <input type="file" id="image" name="image" accept="image/png" onchange="showImage(event, 'imagePreview')">
             </div>
             <div class="input-group small">
                 <label for="packName">Pack Name:</label>
-                <input type="text" id="packName" name="packName">
+                <input type="text" id="packName" name="packName" value = "Custom Jukebox">
             </div>
             <div class="input-group small">
                 <label for="packVersion">Pack Format:</label>
-                <input type="number" id="packVersion" name="packVersion">
+                <input type="number" id="packVersion" name="packVersion" value=34>
             </div>
             <div class="input-group large">
                 <label for="packDescription">Pack Description:</label>
-                <input type="text" id="packDescription" name="packDescription">
+                <input type="text" id="packDescription" name="packDescription" value="Pack made using \n§ehttps://juponhuissier.github.io/custom-jukebox/">
             </div>
         </form>
     </div>

@@ -1,13 +1,16 @@
 const wantedCharacters = 'a-zA-Z0-9 ';
 const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
 // Function to show image preview
-function showImage(event) {
+function showImage(event, elementId) {
     const input = event.target;
     const reader = new FileReader();
     reader.onload = function() {
-        const imagePreview = document.getElementById('imagePreview');
+        const imagePreview = document.getElementById(elementId);
         imagePreview.style.backgroundImage = 'url(' + reader.result + ')';
-        imagePreview.querySelector('.upload-text').style.display = 'none'; // Hide the upload text
+        const uploadText = imagePreview.querySelector('.upload-text');
+        if (uploadText) {
+            uploadText.style.display = 'none'; // Hide the upload text
+        }
     }
     reader.readAsDataURL(input.files[0]);
 }
@@ -18,6 +21,14 @@ function updateButtonLabel(event) {
     const fileName = fileInput.files[0].name;
     const uploadLabel = fileInput.nextElementSibling; // Assuming label is next sibling
     uploadLabel.textContent = fileName;
+}
+
+function removeMusicDisc(button) {
+    // Get the parent element (music-disc-input-div) of the button clicked
+    const musicDiscDiv = button.parentNode;
+    
+    // Remove the music-disc-input-div from its parent container
+    musicDiscDiv.parentNode.removeChild(musicDiscDiv);
 }
 
 // Function to add new music-disc-input-div
@@ -42,7 +53,9 @@ function addMusicDisc() {
             <input type="file" class="file-input" name="file" accept="audio/ogg" style="display: none;">
             <label class="upload-label">Upload File</label>
         </div>
+        <button class="remove-button" onclick="removeMusicDisc(this)">Remove</button>
     `;
+
 
     // Append the new music-disc-input-div to the container
     musicDiscContainer.appendChild(newMusicDisc);
@@ -55,6 +68,7 @@ function addMusicDisc() {
     newUploadLabel.addEventListener('click', () => {
         newFileInput.click();
     });
+
 }
 //Remove file extension
 function removeFileExtension(fileName) {
@@ -86,7 +100,11 @@ function getAudioDuration(soundFile) {
     });
 }
 
-// Function to handle music disc inputs and create JSON data
+function createMcFunction(zip,name){
+    const textContent = `#give ${name} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"}]`;
+    zip.file(`data/new_music/function/${name}.mcfunction`, textContent);
+}
+
 // Function to handle music disc inputs and create JSON data
 async function createMusicDiscJson(zip) {
     const musicDiscInputs = document.querySelectorAll('.music-disc-input-div input[type="file"]');
@@ -115,6 +133,14 @@ async function createMusicDiscJson(zip) {
             };
 
             zip.file(`data/new_music/jukebox_song/${cleanedName}.json`, JSON.stringify(musicDataJSON, null, 2));
+        } catch (error) {
+            console.error('Error while loading audio:', error);
+            // Handle error as needed
+        }
+
+        try {
+            //wait for function creation
+            await createMcFunction(zip,cleanedName)
         } catch (error) {
             console.error('Error while loading audio:', error);
             // Handle error as needed
@@ -166,13 +192,12 @@ async function createMusicDiscJson(zip) {
 function createPackJson() {
     const packVersion = parseInt(document.getElementById('packVersion').value, 10);
     const packDescription = document.getElementById('packDescription').value;
-
     const jsonData = 
     {
         pack: {
           pack_format: packVersion,
           supported_formats: [34, 45],
-          description: packDescription
+          description: packDescription.replace(/\\n/g, '\n')
         },
         overlays: {
             entries: [
@@ -189,12 +214,15 @@ function createPackJson() {
 
 // Event listener for download button
 document.getElementById('downloadDataButton').addEventListener('click', function() {
-    const packName = document.getElementById('packName').value || 'pack';
+    const packName = document.getElementById('packName').value ;
+    const packImageFileInput = document.getElementById('image');
+    const packImage = packImageFileInput.files[0];
     const zip = new JSZip();
 
     // Create pack data JSON
     const packJson = createPackJson();
     zip.file("pack.mcmeta", JSON.stringify(packJson, null, 2));
+    zip.file('pack.png', packImage, { base64: true });
 
     // Create music disc data JSON and add to zip
     createMusicDiscJson(zip)
