@@ -1,14 +1,26 @@
 const wantedCharacters = 'a-zA-Z0-9 ';
 const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
+//Default Image Preview
+document.addEventListener('DOMContentLoaded', function() {
+    // Show default image when the page loads
+    const defaultImagePath = 'default_jukebox_pack_image.png'; // Adjust path as needed
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.style.backgroundImage = 'url(' + defaultImagePath + ')';
+    const uploadText = imagePreview.querySelector('.upload-text');
+    if (uploadText) {
+        uploadText.style.display = 'block'; // Show the upload text
+    }
+});
 // Function to show image preview
-function showImage(event, elementId) {
+function showImage(event, elementId, hideText) {
     const input = event.target;
+    console.log(input)
     const reader = new FileReader();
     reader.onload = function() {
         const imagePreview = document.getElementById(elementId);
         imagePreview.style.backgroundImage = 'url(' + reader.result + ')';
         const uploadText = imagePreview.querySelector('.upload-text');
-        if (uploadText) {
+        if (uploadText && hideText) {
             uploadText.style.display = 'none'; // Hide the upload text
         }
     }
@@ -213,7 +225,7 @@ function createPackJson() {
 }
 
 // Event listener for download button
-document.getElementById('downloadDataButton').addEventListener('click', function() {
+document.getElementById('downloadDataButton').addEventListener('click', async function() {
     const packName = document.getElementById('packName').value ;
     const packImageFileInput = document.getElementById('image');
     const packImage = packImageFileInput.files[0];
@@ -222,8 +234,15 @@ document.getElementById('downloadDataButton').addEventListener('click', function
     // Create pack data JSON
     const packJson = createPackJson();
     zip.file("pack.mcmeta", JSON.stringify(packJson, null, 2));
-    zip.file('pack.png', packImage, { base64: true });
 
+    if (packImage){
+        zip.file('pack.png', packImage, { base64: true });
+    }
+    else {
+        const response = await fetch("default_jukebox_pack_image.png");
+        const arrayBuffer = await response.arrayBuffer();
+        zip.file('pack.png', arrayBuffer)
+    }
     // Create music disc data JSON and add to zip
     createMusicDiscJson(zip)
         .then(() => {
