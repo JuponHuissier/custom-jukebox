@@ -1,4 +1,4 @@
-const wantedCharacters = 'a-zA-Z0-9 ';
+const wantedCharacters = 'a-z0-9 ';
 const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
 //Default Image Preview
 document.addEventListener('DOMContentLoaded', function() {
@@ -128,7 +128,10 @@ async function createMusicDiscJson(zip) {
         const name = musicDiscTextInputs[i].value;
         const author = musicDiscTextInputs[i + 1].value;
         const soundFile = musicDiscInputs[i % 2].files[0];
-        const cleanedName = name.replace(unwantedCharactersPattern, '_');
+        console.log(unwantedCharactersPattern)
+        
+        const cleanedInput = name.replace(unwantedCharactersPattern, '_');
+        const cleanedName = cleanedInput.replace(/ /g, '_');
 
         try {
             // Wait for audio duration retrieval
@@ -143,7 +146,7 @@ async function createMusicDiscJson(zip) {
                     sound_id: `minecraft:music_disc.${cleanedName}`
                 }
             };
-
+            console.log(cleanedName)
             zip.file(`data/new_music/jukebox_song/${cleanedName}.json`, JSON.stringify(musicDataJSON, null, 2));
         } catch (error) {
             console.error('Error while loading audio:', error);
