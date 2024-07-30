@@ -1,4 +1,4 @@
-const wantedCharacters = 'a-z0-9 ';
+const wantedCharacters = 'a-zA-Z0-9 ';
 const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
 //Default Image Preview
 document.addEventListener('DOMContentLoaded', function() {
@@ -128,8 +128,6 @@ async function createMusicDiscJson(zip) {
         const name = musicDiscTextInputs[i].value;
         const author = musicDiscTextInputs[i + 1].value;
         const soundFile = musicDiscInputs[i % 2].files[0];
-        console.log(unwantedCharactersPattern)
-        
         const cleanedInput = name.toLowerCase().replace(unwantedCharactersPattern, '_');
         const cleanedName = cleanedInput.replace(/ /g, '_');
 
@@ -172,10 +170,11 @@ async function createMusicDiscJson(zip) {
                     // Add sound file directory to the json
                     const nameUsed = removeFileExtension(file.name).toLowerCase().replace(unwantedCharactersPattern, '_');
                     const soundData = {
-                        name: `records/music_disc_${index + 1}_${nameUsed}`
+                        name: `records/music_disc_${index + 1}_${nameUsed}`,
+                        stream: true
                     };
                     // sounds.json name
-                    const musicDiscName = `music_disc.${musicDiscTextInputs[index * 2].value.toLowerCase().replace(unwantedCharactersPattern, '_')}`;
+                    const musicDiscName = `music_disc.${musicDiscTextInputs[index * 2].value.toLowerCase().replace(unwantedCharactersPattern, '_').replace(/ /g, '_')}`;
                     if (!musicDiscData[musicDiscName]) {
                         musicDiscData[musicDiscName] = { sounds: [] };
                     }
