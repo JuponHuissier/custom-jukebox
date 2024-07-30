@@ -130,7 +130,7 @@ async function createMusicDiscJson(zip) {
         const soundFile = musicDiscInputs[i % 2].files[0];
         console.log(unwantedCharactersPattern)
         
-        const cleanedInput = name.replace(unwantedCharactersPattern, '_');
+        const cleanedInput = name.toLowerCase().replace(unwantedCharactersPattern, '_');
         const cleanedName = cleanedInput.replace(/ /g, '_');
 
         try {
@@ -169,20 +169,20 @@ async function createMusicDiscJson(zip) {
             const musicDiscPromise = new Promise((innerResolve, innerReject) => {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    // Add sound data to music disc object
-                    const nameUsed = removeFileExtension(file.name);
+                    // Add sound file directory to the json
+                    const nameUsed = removeFileExtension(file.name).toLowerCase().replace(unwantedCharactersPattern, '_');
                     const soundData = {
                         name: `records/music_disc_${index + 1}_${nameUsed}`
                     };
-
-                    const musicDiscName = `music_disc.${musicDiscTextInputs[index * 2].value.replace(unwantedCharactersPattern, '_')}`;
+                    // sounds.json name
+                    const musicDiscName = `music_disc.${musicDiscTextInputs[index * 2].value.toLowerCase().replace(unwantedCharactersPattern, '_')}`;
                     if (!musicDiscData[musicDiscName]) {
                         musicDiscData[musicDiscName] = { sounds: [] };
                     }
                     musicDiscData[musicDiscName].sounds.push(soundData);
 
                     // Add file to ZIP
-                    zip.file(`assets/minecraft/sounds/records/music_disc_${index + 1}_${file.name}`, event.target.result.split(',')[1], { base64: true });
+                    zip.file(`assets/minecraft/sounds/records/music_disc_${index + 1}_${nameUsed}.ogg`, event.target.result.split(',')[1], { base64: true });
 
                     innerResolve();
                 };
