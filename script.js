@@ -168,7 +168,7 @@ async function createMusicDiscJson(zip) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     // Add sound file directory to the json
-                    const nameUsed = removeFileExtension(file.name).toLowerCase().replace(unwantedCharactersPattern, '_');
+                    const nameUsed = removeFileExtension(file.name).toLowerCase().replace(/ /g, '_').replace(unwantedCharactersPattern, '_');
                     const soundData = {
                         name: `records/music_disc_${index + 1}_${nameUsed}`,
                         stream: true
