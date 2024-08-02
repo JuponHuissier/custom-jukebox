@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Function to show image preview
 function showImage(event, elementId, hideText) {
     const input = event.target;
-    console.log(input)
+    // console.log(input)
     const reader = new FileReader();
     reader.onload = function() {
         const imagePreview = document.getElementById(elementId);
@@ -100,7 +100,7 @@ function removeFileExtension(fileName) {
 function getAudioDuration(soundFile) {
     return new Promise((resolve, reject) => {
         const audio = new Audio(URL.createObjectURL(soundFile));
-
+        // console.log(audio)
         audio.addEventListener('loadedmetadata', function() {
             const duration = audio.duration;
             resolve(duration);
@@ -127,14 +127,14 @@ async function createMusicDiscJson(zip) {
     for (let i = 0; i < musicDiscTextInputs.length; i += 2) {
         const name = musicDiscTextInputs[i].value;
         const author = musicDiscTextInputs[i + 1].value;
-        const soundFile = musicDiscInputs[i % 2].files[0];
+        var soundFile = musicDiscInputs[i / 2].files[0];
         const cleanedInput = name.toLowerCase().replace(unwantedCharactersPattern, '_');
         const cleanedName = cleanedInput.replace(/ /g, '_');
 
         try {
             // Wait for audio duration retrieval
             const duration = await getAudioDuration(soundFile);
-            console.log('Duration:', duration, 'seconds');
+            // console.log('Duration:', duration, 'seconds');
 
             const musicDataJSON = {
                 comparator_output: 1,
@@ -144,7 +144,7 @@ async function createMusicDiscJson(zip) {
                     sound_id: `minecraft:music_disc.${cleanedName}`
                 }
             };
-            console.log(cleanedName)
+            // console.log(cleanedName)
             zip.file(`data/new_music/jukebox_song/${cleanedName}.json`, JSON.stringify(musicDataJSON, null, 2));
         } catch (error) {
             console.error('Error while loading audio:', error);
@@ -228,7 +228,10 @@ function createPackJson() {
 
 // Event listener for download button
 document.getElementById('downloadDataButton').addEventListener('click', async function() {
-    const packName = document.getElementById('packName').value ;
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block'; // Show loader
+
+    const packName = document.getElementById('packName').value;
     const packImageFileInput = document.getElementById('image');
     const packImage = packImageFileInput.files[0];
     const zip = new JSZip();
@@ -237,28 +240,29 @@ document.getElementById('downloadDataButton').addEventListener('click', async fu
     const packJson = createPackJson();
     zip.file("pack.mcmeta", JSON.stringify(packJson, null, 2));
 
-    if (packImage){
-        zip.file('pack.png', packImage, { base64: true });
+    try {
+        if (packImage) {
+            zip.file('pack.png', packImage, { base64: true });
+        } else {
+            const response = await fetch("default_jukebox_pack_image.png");
+            const arrayBuffer = await response.arrayBuffer();
+            zip.file('pack.png', arrayBuffer);
+        }
+
+        // Create music disc data JSON and add to zip
+        await createMusicDiscJson(zip);
+
+        // Generate and download ZIP file
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = `${packName}.zip`;
+        link.click();
+    } catch (error) {
+        console.error('Error generating ZIP file:', error);
+        // Handle error appropriately
+    } finally {
+        loader.style.display = 'none'; // Hide loader
     }
-    else {
-        const response = await fetch("default_jukebox_pack_image.png");
-        const arrayBuffer = await response.arrayBuffer();
-        zip.file('pack.png', arrayBuffer)
-    }
-    // Create music disc data JSON and add to zip
-    createMusicDiscJson(zip)
-        .then(() => {
-            // Generate and download ZIP file
-            return zip.generateAsync({ type: "blob" });
-        })
-        .then((content) => {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = `${packName}.zip`;
-            link.click();
-        })
-        .catch((error) => {
-            console.error('Error generating ZIP file:', error);
-            // Handle error appropriately
-        });
 });
+
