@@ -1,175 +1,90 @@
-body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
+/* Hide the radio buttons */
+input[type="radio"] {
+    display: none;
+}
+.tabs-wrapper {
     display: flex;
-}
-
-.left-side {
-    width: 25%;
-    background-color: #f4f4f4;
-    position: fixed;
-    height: 100vh;
-    overflow: hidden;
-    padding: 20px;
-    box-sizing: border-box;
-    z-index: 1;
-}
-
-.right-side {
-    margin-left: 25%;
-    width: 75%;
-    height: 100vh;
-    overflow-y: scroll;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-group.small {
-    flex: 0 0 auto; /* Prevent stretching */
-}
-
-.input-group.large {
-    flex: 1 0 auto; /* Allow stretching */
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="file"] {
-    width: calc(100% - 12px); /* Adjust width considering padding and border */
-    padding: 8px;
-    box-sizing: border-box;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 97vw;
     border: 1px solid #ccc;
-    margin-top: 5px;
+    margin-left: 1vw;
+    margin-right: 1vw;
 }
 
-input[type="file"] {
+.tabs-wrapper .logo {
+ margin-right: 2vw;
+
+}
+/* Style the labels as tabs */
+.tabs label {
+    padding: 10px 20px;
+    background: #ddd;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    margin-right: -1px;
+    display: inline-block;
+}
+
+/* Make the first tab label active */
+#tab1:checked ~ .tab-labels label[for="tab1"],
+#tab2:checked ~ .tab-labels label[for="tab2"],
+#tab3:checked ~ .tab-labels label[for="tab3"] {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    font-weight: bold;
+}
+
+/* Tab content area */
+.tab-content {
+    padding: 20px;
+    background-color: #fff;
+}
+
+/* Hide all tab content initially */
+.content {
     display: none;
 }
 
-.image-label {
+/* Show content when corresponding tab is checked */
+#tab1:checked ~ .tab-content .content1,
+#tab2:checked ~ .tab-content .content2,
+#tab3:checked ~ .tab-content .content3 {
     display: block;
-    width: 100%;
-    padding-top: 100%; /* This maintains the aspect ratio 1:1 (square) */
-    background-color: #e0e0e0;
-    position: relative;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    margin-top: 10px;
-    image-rendering: pixelated;
 }
 
-.image-preview {
-    width: 100%;
+/* Playlist Styles */
+
+.discs-main {
+    display: grid;
+    border: 1px solid #ccc;
+}
+
+/* Header */
+.discs-main .playlist-details {
+    display: flex;
+    border: 1px solid #ccc;
+}
+
+/* Playlist */
+.playlist-music {
+    display: grid;
+}
+
+.playlist-music .song {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    border: 1px solid #ccc;
+}
+.image { 
+    grid-area: 1 / 1 / 3 / 3; 
     height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-right: 100%;
+
 }
-
-.upload-text {
-    font-size: 16px;
-    color: #ffb700;
-    text-align: center;
-}
-
-.input-group.small input[type="text"] {
-    height: 30px; /* Adjust height as needed */
-}
-
-.input-group.large input[type="text"] {
-    height: 50px; /* Adjust height as needed */
-}
-
-.music-disc-input-div {
-    padding: 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.upload-label {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.upload-label:hover {
-    background-color: #0056b3;
-}
-
-.file-input {
-    display: none;
-}
-
-.add-music-disc-button {
-    width: 50px;
-    height: 50px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 36px;
-    text-align: center;
-    line-height: 50px; /* Vertically center the plus sign */
-    cursor: pointer;
-    border-radius: 50%;
-}
-
-.add-music-disc-button:hover {
-    background-color: #0056b3;
-}
-
-.download-data-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px; /* Updated to position at the bottom right */
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.download-data-button:hover {
-    background-color: #0056b3;
-}
-
-.loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    display: none; /* Hidden by default */
-    position: fixed; /* Positioned at the center */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999; /* On top of other elements */
-    margin-left: -60px; /* Half of the width */
-    margin-top: -60px;  /* Half of the height */
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+.song-name { grid-area: 2 / 3 / 3 / 5; }
+.song-author { grid-area: 1 / 3 / 2 / 5; }
+.song-file-upload { grid-area: 1 / 5 / 3 / 6; }
