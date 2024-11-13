@@ -4,70 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Discs</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <!-- Radio buttons for the tabs -->
-    <input type="radio" name="tabs" id="tab1" checked>
-    <input type="radio" name="tabs" id="tab2">
-    <input type="radio" name="tabs" id="tab3">
-
-    <!-- Labels for each tab -->
-    <div class="tabs-wrapper">
-        <div class="tabs">
-            <div class="tab-labels">
-            <label for="tab1">Custom Discs</label>
-            <label for="tab2">Install Guide</label>
-            <label for="tab3">Credits</label>
-            </div>
-        </div>
-        <div class="logo">Logo</div>
-    </div>
-    
-    <!-- Content for each tab -->
-    <div class="tab-content">
-        <!-- Custom Discs -->
-        <div class="content content1">
-            <div class="discs-main">
-                <header class="playlist-details">
-                    <div class="pack-image">
-                        Image
-                    </div>
-                    <div class ="pack-name">
-                        Name
-                    </div>
-                    <div>
-                        
-                    </div>
-                </header>
-                <div class="playlist-music">
-                    <div class="song">
-                        <div class="image"> Image </div>
-                        <div class="song-name"> Name </div>
-                        <div class="song-author"> Author </div>
-                        <div class="song-file-upload"> File </div>
-                    </div>
-                    <div class="song">
-                        song
-                    </div>
-                    <div class="song">
-                        song
-                    </div>
-                </div>
-            </div>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul class = "navigation-menu">
+            <li class = "navigation-item"><a href="https://www.youtube.com/watch?v=TxOA6VGGxgU">Creation Menu</a></li>
+            <li class = "navigation-item"><a href="https://www.youtube.com/watch?v=TxOA6VGGxgU">Installation Guide</a></li>
+            <li class = "navigation-item"><a href="https://www.youtube.com/watch?v=TxOA6VGGxgU">Help</a></li>
+        </ul>
+    </nav>
+<div class = "playlist-container">
+    <header class = "info-section">
+         <!-- Image Section -->
+        <div class="playlist-image-container">
+            <img src="images/default_jukebox_pack_image.png" alt="Playlist Image" class = "playlist-image">
         </div>
 
-        <!-- Install Guide -->
-        <div class="content content2">
-        <h2>Content of Tab 2</h2>
-        <p>This is the content of the second tab.</p>
+        <!-- Text Section -->
+        <div class="text-container">
+            <p class="playlist-info-text playlist-version">Version</p>
+            <h1 class="playlist-info-text playlist-title">Title</h1>
+            <h2 class="playlist-info-text  playlist-description">Description</h2>
         </div>
-
-        <!-- Credits -->
-        <div class="content content3">
-        <h2>Content of Tab 3</h2>
-        <p>This is the content of the third tab.</p>
-        </div>
-    </div>
+    </header>
+</div>
 </body>
 </html>

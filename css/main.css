@@ -1,0 +1,84 @@
+@import url('satoshi.css');
+
+* {
+    font-family: Satoshi-Regular;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: black;
+    color: #f3f3f3;
+}
+
+/* Navigation bar */
+.navigation-menu {
+    position: fixed;
+    width: 100vw;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    border: solid;
+    border-radius: 2vh;
+    background-color: #333;
+    border-color: #333;
+}
+
+/* Style links */
+.navigation-menu a {
+    text-decoration: none;
+    padding: 2vh;
+    color: #f3f3f3;
+    border: solid;
+    border-radius: 2vh;
+    border-color: #333;
+    background-color: #333;
+    display: block;
+}
+
+/* Style each item */
+.navigation-item {
+    flex : 1 ;
+    text-align: center;
+}
+
+/* Hover effect */
+.navigation-menu a:hover {
+    background-color: #555;
+    transition: background-color 0.3s ease;
+  }
+
+/* Fix position of the content */
+.playlist-container {
+    padding-top: 12vh;
+}
+
+.playlist-image-container {
+    margin-top: 2vh;
+    margin-left: 2vw;
+    height: 50vh;
+    width: 50vh;
+}
+
+.playlist-image {
+    height: 100%;
+    width: 100%;
+}
+
+.info-section {
+    display: flex;
+    align-items: center;
+}
+
+.text-container {
+    margin-left: 2vw;
+}
+
+.playlist-info-text  {
+    margin: 1vw;
+}
+
+.playlist-title {
+    font-family: Satoshi-Black ;
+    font-size: 10vh;
+}
