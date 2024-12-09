@@ -13,7 +13,6 @@ body {
 
 /* Navigation bar */
 .navigation-menu {
-    position: fixed;
     width: 100vw;
     list-style-type: none;
     display: flex;
@@ -50,7 +49,7 @@ body {
 
 /* Fix position of the content */
 .playlist-container {
-    padding-top: 12vh;
+    padding-top: 0vh;
 }
 
 .playlist-image-container {
@@ -79,6 +78,59 @@ body {
 }
 
 .playlist-title {
-    font-family: Satoshi-Black ;
+    font-family: 'Satoshi-Black' ;
     font-size: 10vh;
+}
+
+/* .playlist-element-div {
+    
+} */
+
+.song-info-div {
+    font-family: 'Satoshi-Light';
+    margin-top: 2vh;
+    width: 100vw;
+    list-style-type: none;
+    display: flex;
+    justify-content:space-around;
+    border-bottom: solid;
+    border-color: #333;
+    vertical-align: text-top;
+}
+
+.song-info-item {
+    margin-left: 2vw;
+}
+
+.top-label-title {
+    flex: 2;
+}
+.top-label-author {
+    flex: 2;
+}
+.top-label-song-length {
+    flex: 0.5;
+}
+.top-label-song-file {
+    flex: 2;
+}
+
+.top-label-add {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.top-label-add:hover {
+    color: gray; /* Make text gray */
+}
+.add-music-disc-button {
+    font-size: 2rem;
+    line-height: 3vh;
+}
+
+.adding-text {
+    font-size: 1rem; /* Regular font size for "Add" */
+    margin: 0; /* Remove any default margins */
 }

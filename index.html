@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Discs</title>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/playlist_styles.css">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -30,7 +31,23 @@
         </div>
     </header>
     <div class = "playlist-element-list">
-        <p>Grid display Here</p>
+        <ul class = "song-info-div">
+            <li class = "top-label-add song-info-item">
+                <div id="addMusicDisc" class="add-music-disc-button" onclick="addMusicDisc()">
+                    <span class = "plus-sign">+</span>
+                </div>
+                <p class = "adding-text">Add</p>
+            </li>
+            <li class = "top-label-title song-info-item">Title</li>
+            <li class = "top-label-author song-info-item">Author</li>
+            <li class = "top-label-song-file song-info-item">File</li>
+            <li class = "top-label-song-length song-info-item">Time</li>
+        </ul>
+        <div class = "playlist-div">
+            <div class = "song">
+                
+            </div>
+        </div>
     </div>
 </div>
 </body>
