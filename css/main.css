@@ -126,7 +126,7 @@ body {
 .top-label-add:hover {
     color: gray; /* Make text gray */
 }
-.add-music-disc-button {
+.add-song-button {
     font-size: 2rem;
     line-height: 3vh;
 }

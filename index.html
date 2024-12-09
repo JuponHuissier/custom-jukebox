@@ -33,7 +33,7 @@
     <div class = "playlist-element-list">
         <ul class = "song-info-div">
             <li class = "top-label-add song-info-item">
-                <div id="addMusicDisc" class="add-music-disc-button ">
+                <div id="addSong" class="add-song-button ">
                     <span class = "plus-sign" onclick="addMusicDisc()">+</span>
                 </div>
                 <p class = "adding-text" onclick="addMusicDisc()">Add</p>
@@ -45,19 +45,16 @@
         </ul>
         <div id = "playlist-div">
             <div class = "song">
-                <div class="input-group">
-                    <label for="name">Enter Name:</label>
-                    <input type="text" id="name" name="name">
-                </div>
-                <div class="input-group">
-                    <label for="author">Enter Author Name:</label>
-                    <input type="text" id="author" name="author">
-                </div>
-                <div class="input-group">
-                    <input type="file" class="file-input" name="file" accept="audio/ogg" style="display: none;">
-                    <label class="upload-label">Upload File</label>
-                </div>
-                <button class="remove-button" onclick="removeMusicDisc(this)">Remove</button>
+                <li class = "song-image-li song-item"><div class = "song-image-container"><img src="dummy" class="song-image"></div></li>
+                <li class = "song-title-li song-item"><div class="song-title">Title</div></li>
+                <li class = "song-author-li song-item"><div class="song-author">Author</div></li>
+                <li class = "song-file-li song-item"><div class="song-file">File</div></li>
+                <li class = "song-length-li song-item"><div class="song-length">Time</div></li>
+                <li class = "song-remove song-item">
+                    <div id="removeSong" class="remove-song-button ">
+                        <span class = "cross-sign" onclick="addMusicDisc()">⨉</span>
+                    </div>
+                </li>
             </div>
         </div>
     </div>

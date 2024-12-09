@@ -1,0 +1,73 @@
+.song {
+    font-family: 'Satoshi-Light';
+    margin-top: 2vh;
+    width: 100vw;
+    height: auto;
+    list-style-type: none;
+    display: flex;
+    justify-content:space-around;
+    border: solid;
+    border-color: #333;
+    vertical-align: text-top;
+    position: relative;
+}
+
+.song-item {
+    margin-left: 2vw;
+}
+.song-image-li {
+    flex: 1;
+}
+.song-title-li {
+    flex: 2;
+}
+.song-title {
+    margin-top: 10%;
+}
+.song-author-li {
+    flex: 2;
+}
+.song-author {
+    margin-top: 10%;
+}
+.song-length-li {
+    flex: 0.5;
+}
+.song-length {
+    margin-top: 40%;
+}
+.song-file-li {
+    flex: 2;
+}
+.song-file {
+    margin-top: 10%;
+}
+
+.song-remove {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 1vh;
+    
+}
+
+.song-remove:hover {
+    color: gray; /* Make text gray */
+}
+
+.song-image-container {
+    flex: 1;
+    width: 50%;
+    background-color: red;
+    padding-top:50%;
+    position: relative;
+}
+.song-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
