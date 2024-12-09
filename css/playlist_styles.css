@@ -60,7 +60,7 @@
 .song-image-container {
     flex: 1;
     width: 50%;
-    background-color: red;
+    background-color: rgb(3, 2, 3);
     padding-top:50%;
     position: relative;
 }
