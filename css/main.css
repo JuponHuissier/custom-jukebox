@@ -10,6 +10,7 @@ body {
     background-color: black;
     color: #f3f3f3;
     overflow-x: hidden;
+    padding-bottom: 2vh;
 }
 
 /* Navigation bar */
