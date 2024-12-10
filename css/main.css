@@ -64,6 +64,7 @@ body {
 .playlist-image {
     height: 100%;
     width: 100%;
+    cursor: pointer;
 }
 
 .info-section {
@@ -79,13 +80,49 @@ body {
     margin: 1vw;
 }
 
-.playlist-title {
+.pack-title-input {
     font-family: 'Satoshi-Black' ;
     font-size: 10vh;
+    color: white;
+    background-color: black;
+    border: none;
 }
 
-/* .playlist-element-div {
-    
+.pack-title-input:focus {
+    outline: none;
+    border-bottom: solid;
+    box-shadow: none;
+}
+
+.pack-description-input {
+    font-family: 'Satoshi-Medium' ;
+    font-size: 5vh;
+    color: white;
+    background-color: black;
+    border: none;
+    width: 100%;
+}
+
+.pack-description-input:focus {
+    outline: none;
+    border-bottom: solid;
+    box-shadow: none;
+}
+
+.pack-version-input {
+    background: none;
+    border: none;
+    color: white;
+    width: 10ch;
+}
+.pack-version-input:focus {
+    outline: none;
+    border-bottom: solid;
+    box-shadow: none;
+}
+
+/* .playlist-element-list {
+    position: sticky;
 } */
 
 .song-info-div {

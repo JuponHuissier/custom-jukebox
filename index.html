@@ -20,14 +20,26 @@
     <header class = "info-section">
          <!-- Image Section -->
         <div class="playlist-image-container">
-            <img src="images/default_jukebox_pack_image.png" alt="Playlist Image" class = "playlist-image">
+            <label for="pack-icon-input" class="song-image-label">
+                <img src="images/default_jukebox_pack_image.png" alt="Playlist Image" class = "playlist-image">
+            </label>
+            <input type="file" id="pack-icon-input" class="pack-icon-input" accept="image/*" style="display: none;" />
         </div>
 
         <!-- Text Section -->
         <div class="text-container">
-            <p class="playlist-info-text playlist-version">Version</p>
-            <h1 class="playlist-info-text playlist-title">Title</h1>
-            <h2 class="playlist-info-text  playlist-description">Description</h2>
+            <div class="playlist-info-text playlist-version">
+                <label for="pack-version">Version :</label>
+
+                <input type="number" id="pack-version" name="packVersiob" min="1" value="1" class ="pack-version-input" />
+            </div>
+            
+            <div>
+                <input type="text" id="pack-title" name="packTitle" value="Title" class="playlist-info-text pack-title-input" />
+            </div>
+            <form>
+                <textarea id="pack-description" name="packDescription" rows="2" cols="65" class="playlist-info-text  pack-description-input">Pack made using \n§ehttps://juponhuissier.github.io/custom-jukebox/</textarea>
+            </form>
         </div>
     </header>
     <div class = "playlist-element-list">
