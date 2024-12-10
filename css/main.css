@@ -10,7 +10,8 @@ body {
     background-color: black;
     color: #f3f3f3;
     overflow-x: hidden;
-    padding-bottom: 2vh;
+    padding-bottom: 6vh;
+    position: relative;
 }
 
 /* Navigation bar */
@@ -172,4 +173,25 @@ body {
 .adding-text {
     font-size: 1rem; /* Regular font size for "Add" */
     margin: 0; /* Remove any default margins */
+}
+
+.download-button-container {
+    position: absolute;
+    bottom: 0.5vh;
+    right: 0;
+}
+
+.download-button {
+    text-decoration: none;
+    padding: 0.5vh;
+    color: #f3f3f3;
+    border: solid;
+    border-radius: 2vh;
+    border-color: #333;
+    background-color: #333;
+    display: block;
+}
+.download-button:hover {
+    background-color: #555;
+    transition: background-color 0.3s ease;
 }
