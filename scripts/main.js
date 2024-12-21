@@ -1,3 +1,5 @@
+let musicDiscIndexId = 0
+
 function addMusicDisc(){
     const musicDiscContainer = document.getElementById('playlist-div');
 
@@ -9,20 +11,22 @@ function addMusicDisc(){
     newMusicDisc.innerHTML = `
             <li class="song-image-li song-item">
                 <div class="song-image-container">
-                    <label for="song-image-input" class="song-image-label">
-                        <img src="dummy" class="song-image" alt="Disc Texture">
+                    <label for="songImageInput${musicDiscIndexId}" class="song-image-label">
+                        <div class="song-image" id="songImagePreview${musicDiscIndexId}">
+                            <span class="upload-text">Upload Image</span>
+                        </div>
                     </label>
-                    <input type="file" id="song-image-input" class="song-image-input" accept="image/*" style="display: none;" />
+                    <input type="file" id="songImageInput${musicDiscIndexId}" name="song-image-input" class="song-image-input" accept="image/png" style="display: none;" onchange="showImage(event, 'songImagePreview${musicDiscIndexId}', true)"/>
                 </div>
             </li>
             <li class="song-title-li song-item">
                 <div class="song-title">
-                    <input type="text" class="song-title-input text-input" placeholder="Enter title" value="Title">
+                    <input type="text" class="song-title-input text-input" id="songTitle${musicDiscIndexId}" placeholder="Enter title" value="Title">
                 </div>
             </li>
             <li class="song-author-li song-item">
                 <div class="song-author">
-                    <input type="text" class="song-author-input text-input" placeholder="Enter author" value="Author">
+                    <input type="text" class="song-author-input text-input" id="songAuthor${musicDiscIndexId}" placeholder="Enter author" value="Author">
                 </div>
             </li>
             <li class="song-file-li song-item">
@@ -30,7 +34,7 @@ function addMusicDisc(){
                     <label for="song-file-input" class="song-file-label">
                         No File &#10515
                     </label>
-                    <input type="file" id="song-file-input" class="file-input" accept="audio/*" style="display: none;">
+                    <input type="file" id="song-file-input" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/*" style="display: none;" onchange="showFileName()">
                 </div>
             </li>
             <li class="song-length-li song-item">
@@ -45,7 +49,8 @@ function addMusicDisc(){
             </li>
     `;
 
-
+    //Add 1 to musicDiscIndexId
+    musicDiscIndexId = musicDiscIndexId + 1
     // Append the new music-disc-input-div to the container
     musicDiscContainer.appendChild(newMusicDisc);
 
@@ -65,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // Function to show image preview
 function showImage(event, elementId, hideText) {
+    console.log(elementId)
     const input = event.target;
     // console.log(input)
     const reader = new FileReader();

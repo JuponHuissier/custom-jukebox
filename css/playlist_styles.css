@@ -71,6 +71,8 @@
     bottom: 0;
     right: 0;
     cursor: pointer;
+    background-size: contain;
+    image-rendering: pixelated;
 }
 
 .text-input {
