@@ -21,9 +21,11 @@
          <!-- Image Section -->
         <div class="playlist-image-container">
             <label for="pack-icon-input" class="song-image-label">
-                <img src="images/default_jukebox_pack_image.png" alt="Playlist Image" class = "playlist-image">
+                <div class="playlist-image" id="imagePreview">
+                    <span class="upload-text">Upload Image</span>
+                </div>
             </label>
-            <input type="file" id="pack-icon-input" class="pack-icon-input" accept="image/*" style="display: none;" />
+            <input type="file" id="pack-icon-input" name="pack-icon-input" class="pack-icon-input" accept="image/png" style="display: none;" onchange="showImage(event, 'imagePreview', true)"/>
         </div>
 
         <!-- Text Section -->

@@ -50,3 +50,31 @@ function addMusicDisc(){
     musicDiscContainer.appendChild(newMusicDisc);
 
 }
+
+//Show Pack Icon
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Show default image when the page loads
+    const defaultImagePath = 'images/default_jukebox_pack_image.png'; // Adjust path as needed
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.style.backgroundImage = 'url(' + defaultImagePath + ')';
+    const uploadText = imagePreview.querySelector('.upload-text');
+    if (uploadText) {
+        uploadText.style.display = 'block'; // Show the upload text
+    }
+});
+// Function to show image preview
+function showImage(event, elementId, hideText) {
+    const input = event.target;
+    // console.log(input)
+    const reader = new FileReader();
+    reader.onload = function() {
+        const imagePreview = document.getElementById(elementId);
+        imagePreview.style.backgroundImage = 'url(' + reader.result + ')';
+        const uploadText = imagePreview.querySelector('.upload-text');
+        if (uploadText && hideText) {
+            uploadText.style.display = 'none'; // Hide the upload text
+        }
+    }
+    reader.readAsDataURL(input.files[0]);
+}
