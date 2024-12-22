@@ -31,10 +31,10 @@ function addMusicDisc(){
             </li>
             <li class="song-file-li song-item">
                 <div class="song-file">
-                    <label for="song-file-input" class="song-file-label">
+                    <label for="songFile${musicDiscIndexId}" class="song-file-label">
                         No File &#10515
                     </label>
-                    <input type="file" id="song-file-input" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/*" style="display: none;" onchange="showFileName()">
+                    <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/*" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}')">
                 </div>
             </li>
             <li class="song-length-li song-item">
@@ -83,4 +83,18 @@ function showImage(event, elementId, hideText) {
         }
     }
     reader.readAsDataURL(input.files[0]);
+}
+
+// Function to update the label with the file name
+function showFileName(event, elementId) {
+    const input = event.target;
+
+    if (input.files && input.files[0]) {
+        const fileName = input.files[0].name; // Get the file name
+        const label = document.querySelector(`label[for="${elementId}"]`);
+
+        if (label) {
+            label.textContent = fileName; // Update the label text with the file name
+        }
+    }
 }
