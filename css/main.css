@@ -58,8 +58,9 @@ body {
 .playlist-image-container {
     margin-top: 2vh;
     margin-left: 2vw;
+    aspect-ratio: 1;
     height: 50vh;
-    width: 50vh;
+    object-fit: cover;
 }
 
 .playlist-image {
@@ -191,6 +192,7 @@ body {
 
 .download-button {
     text-decoration: none;
+    width: 10vw;
     padding: 0.5vh;
     color: #f3f3f3;
     border: solid;
@@ -203,3 +205,25 @@ body {
     background-color: #555;
     transition: background-color 0.3s ease;
 }
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #75E192; /* Green */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    display: none; /*Hidden by default */
+    position: fixed; /* Positioned at the center */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999; /* On top of other elements */
+    margin-left: -60px; /* Half of the width */
+    margin-top: -60px;  /* Half of the height */
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/playlist_styles.css">
 </head>
 <body>
+<div id="loader" class="loader"></div>
     <!-- Navigation Bar -->
     <nav>
         <ul class = "navigation-menu">
@@ -31,16 +32,16 @@
         <!-- Text Section -->
         <div class="text-container">
             <div class="playlist-info-text playlist-version">
-                <label for="pack-version">Version :</label>
+                <label for="packVersion">Pack Format :</label>
 
-                <input type="number" id="pack-version" name="packVersiob" min="1" value="1" class ="pack-version-input" />
+                <input type="number" id="packVersion" name="packVersion" min="34" value="34" class ="pack-version-input" />
             </div>
             
             <div>
-                <input type="text" id="pack-title" name="packTitle" value="Title" class="playlist-info-text pack-title-input" />
+                <input type="text" id="packTitle" name="packTitle" value="Title" class="playlist-info-text pack-title-input" />
             </div>
             <form>
-                <textarea id="pack-description" name="packDescription" rows="2" cols="65" class="playlist-info-text  pack-description-input">Pack made using \n§ehttps://juponhuissier.github.io/custom-jukebox/</textarea>
+                <textarea id="packDescription" name="packDescription" rows="2" cols="65" class="playlist-info-text  pack-description-input">Pack made using \n§ehttps://juponhuissier.github.io/custom-jukebox/</textarea>
             </form>
         </div>
     </header>
@@ -63,10 +64,14 @@
     </div>
 </div>
 <div class = "download-button-container">
-    <button class="download-button">
+    <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+    </div>
+    <button class="download-button" onclick="download()">
         Download
     </button>
 </div>
 <script src="scripts/main.js"></script>
+<script src="scripts/jszip.min.js"></script>
 </body>
 </html>

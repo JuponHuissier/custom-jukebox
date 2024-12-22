@@ -113,6 +113,8 @@ function showFileName(event, elementId, songIndex) {
     }
 }
 
+// Function to get the duration of a song
+
 function updateAudioLength(file, songIndex) {
     const songLengthDiv = document.getElementById("songFileLength"+songIndex)
     const audio = new Audio(URL.createObjectURL(file));
@@ -123,7 +125,106 @@ function updateAudioLength(file, songIndex) {
 
             // Update the label with file name and audio duration
             if (songLengthDiv) {
+                songLengthDiv.setAttribute("song_legnth",duration)
                 songLengthDiv.innerHTML = `${minutes}:${seconds}`;
             }
         });
+}
+
+// GENERATING PACK CODE //
+
+// Main Function
+const wantedCharacters = 'a-zA-Z0-9';
+const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
+
+async function download() { //Start
+    //Loading Animation
+    loadingAnimationActivate();
+
+    //Creating the Zip
+    const zip = new JSZip();
+    const packName = document.getElementById('packTitle').value;
+    try {
+        await fetchPackImage(zip);//Fetch Pack Icon
+
+        await fecthPackInfo(zip);//Fetch Pack Description 
+
+
+        // Generate and download ZIP file
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = `${packName}.zip`;
+        link.click();
+    } catch (error) {
+        console.error('Error generating ZIP file:', error);
+        // Handle error appropriately
+    } finally {
+        loadingAnimationDeactivate();
+    }
+}
+
+
+//Loading Animation
+
+function loadingAnimationActivate () {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block'; // Show loader
+}
+
+function loadingAnimationDeactivate () {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'none'; // Hide loader
+}
+
+// Fetch an Image for the Pack
+
+async function fetchPackImage(zip) {
+    const packImageFileInput = document.getElementById('pack-icon-input');
+    const packImage = packImageFileInput.files[0];
+    if (packImage) {
+        zip.file('pack.png', packImage, { base64: true });
+    } else {
+        const response = await fetch("images/default_jukebox_pack_image.png");
+        const arrayBuffer = await response.arrayBuffer();
+        zip.file('pack.png', arrayBuffer);
+    }
+}
+
+//Pack Description In-Game
+async function fecthPackInfo(zip) {
+    const packVersion = parseInt(document.getElementById('packVersion').value, 10);
+    const packDescription = document.getElementById('packDescription').value;
+    const jsonData = 
+    {
+        pack: {
+          pack_format: packVersion,
+          supported_formats: [34, 45],
+          description: packDescription.replace(/\\n/g, '\n')
+        },
+        overlays: {
+            entries: [
+                {
+                    formats: {min_inclusive: 18, max_inclusive: 2147483647},
+                    directory: "overlay_18"
+                }
+            ]
+        }
+    }
+
+    zip.file("pack.mcmeta", JSON.stringify(jsonData, null, 2));
+}
+
+//Remove file extension
+function removeFileExtension(fileName) {
+    // Find the last dot (.) in the string
+    const lastDotIndex = fileName.lastIndexOf('.');
+    
+    if (lastDotIndex === -1) {
+        // If there's no dot in the fileName, return the fileName as is
+        return fileName;
+    } else {
+        // Otherwise, return the part of the fileName up to the last dot
+        return fileName.substring(0, lastDotIndex);
+    }
 }
