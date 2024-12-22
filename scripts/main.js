@@ -6,6 +6,7 @@ function addMusicDisc(){
     // Create a new music-disc-input-div element
     const newMusicDisc = document.createElement('div');
     newMusicDisc.classList.add('song');
+    newMusicDisc.id = 'song'+ musicDiscIndexId
 
     // Add inner HTML for the new music-disc-input-div
     newMusicDisc.innerHTML = `
@@ -34,17 +35,17 @@ function addMusicDisc(){
                     <label for="songFile${musicDiscIndexId}" class="song-file-label">
                         No File &#10515
                     </label>
-                    <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/*" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}')">
+                    <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/*" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
                 </div>
             </li>
             <li class="song-length-li song-item">
-                <div class="song-length">
+                <div class="song-length" id="songFileLength${musicDiscIndexId}">
                     00:00
                 </div>
             </li>
             <li class="song-remove song-item">
                 <div id="removeSong" class="remove-song-button">
-                    <span class="cross-sign" onclick="addMusicDisc()">⨉</span>
+                    <span class="cross-sign" onclick="removeMusicDisc('song${musicDiscIndexId}')">⨉</span>
                 </div>
             </li>
     `;
@@ -56,6 +57,17 @@ function addMusicDisc(){
 
 }
 
+//Remove Song from Playlist
+function removeMusicDisc(songId) {
+    const element = document.getElementById(songId); // Get the element by id
+
+    if (element) {
+        element.remove();
+        console.log(`Element with id '${songId}' has been removed.`);
+    } else {
+        console.log(`Element with id '${songId}' not found.`);
+    }
+}
 //Show Pack Icon
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -86,15 +98,32 @@ function showImage(event, elementId, hideText) {
 }
 
 // Function to update the label with the file name
-function showFileName(event, elementId) {
+function showFileName(event, elementId, songIndex) {
     const input = event.target;
 
     if (input.files && input.files[0]) {
+        const audioFile = input.files[0];
         const fileName = input.files[0].name; // Get the file name
         const label = document.querySelector(`label[for="${elementId}"]`);
-
+        console.log(fileName)
         if (label) {
             label.textContent = fileName; // Update the label text with the file name
+            updateAudioLength(audioFile, songIndex)
         }
     }
+}
+
+function updateAudioLength(file, songIndex) {
+    const songLengthDiv = document.getElementById("songFileLength"+songIndex)
+    const audio = new Audio(URL.createObjectURL(file));
+        audio.addEventListener('loadedmetadata', () => {
+            const duration = audio.duration; // Get duration in seconds
+            const minutes = Math.floor(duration / 60);
+            const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+
+            // Update the label with file name and audio duration
+            if (songLengthDiv) {
+                songLengthDiv.innerHTML = `${minutes}:${seconds}`;
+            }
+        });
 }
