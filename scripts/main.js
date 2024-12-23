@@ -1,4 +1,4 @@
-let musicDiscIndexId = 0
+let musicDiscIndexId = 0;
 
 function addMusicDisc(){
     const musicDiscContainer = document.getElementById('playlist-div');
@@ -35,7 +35,7 @@ function addMusicDisc(){
                     <label for="songFile${musicDiscIndexId}" class="song-file-label">
                         No File &#10515
                     </label>
-                    <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/*" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
+                    <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/ogg" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
                 </div>
             </li>
             <li class="song-length-li song-item">
@@ -125,7 +125,7 @@ function updateAudioLength(file, songIndex) {
 
             // Update the label with file name and audio duration
             if (songLengthDiv) {
-                songLengthDiv.setAttribute("song_legnth",duration)
+                songLengthDiv.setAttribute("song_length",duration)
                 songLengthDiv.innerHTML = `${minutes}:${seconds}`;
             }
         });
@@ -149,7 +149,15 @@ async function download() { //Start
 
         await fecthPackInfo(zip);//Fetch Pack Description 
 
+        await createMusicDiscsDatapackFile(zip);//Create Every Disc
 
+        await createSoundJSON(zip);//Create sounds.json file
+
+        await fetchSoundFile(zip);//Create the assets for minecraft
+
+        await generateCustomModelData(zip);
+
+        await createMcFunction(zip,);
         // Generate and download ZIP file
         const content = await zip.generateAsync({ type: "blob" });
         const link = document.createElement('a');
@@ -164,9 +172,157 @@ async function download() { //Start
     }
 }
 
+//Generating Disc Data
+
+async function createMusicDiscsDatapackFile(zip) {
+    for (let i = 0 ; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song'+i);
+        if (songId) {
+            //Get the Song Title
+            const songTitle = document.getElementById('songTitle'+i).value;
+
+            //Get the song Author
+            const songAuthor = document.getElementById('songAuthor'+i).value;
+
+            //Get the Song Length
+            const songLengthDiv = document.getElementById("songFileLength"+i);
+            const songLengthString = songLengthDiv.getAttribute("song_length");
+            const songLength = Number(+songLengthString)
+            if (!songLength) {
+                window.alert("A Song has no file");
+                throw new Error("A File is Missing")
+            }
+
+            let cleanedName = await cleanName(songTitle) + i
+            const musicDataJSON = {
+                comparator_output: 1,
+                description: songAuthor.concat(' - ', songTitle),
+                length_in_seconds: songLength, // Assign the retrieved duration here
+                sound_event: {
+                    sound_id: `minecraft:music_disc.${cleanedName}`
+                }
+            };
+            zip.file(`data/new_music/jukebox_song/${cleanedName}.json`, JSON.stringify(musicDataJSON, null, 2));
+        }
+        else {
+            console.log(`SONG ID : ${i} Removed`)
+        }
+    }
+}
+
+//Generate Disc Sound Index File
+
+async function createSoundJSON(zip) {
+    console.log("Sounds.json")
+    const musicDiscData = {};
+    for (let i = 0 ; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song'+i);
+        if (songId) {
+            //Get the Song Title
+            const songTitle = document.getElementById('songTitle'+i).value;
+            let songName = await cleanName(songTitle) + i
+            if (!musicDiscData["music_disc."+songName]) {
+                musicDiscData["music_disc."+songName] = { sounds: [] };
+
+                const soundData = {
+                    name: `records/music_disc_${songName}`,
+                    stream: true
+                };
+
+                musicDiscData["music_disc."+songName].sounds.push(soundData);
+            }
+
+        }
+        else {
+            console.log(`SONG ID : ${i} Removed`)
+        }
+    }
+    const musicDiscDataJson = JSON.stringify(musicDiscData, null, 2);
+
+    zip.file('assets/minecraft/sounds.json', musicDiscDataJson);
+}
+
+//Generate Assets for Minecraft
+async function fetchSoundFile(zip) {
+    console.log("Sounds Assets")
+    for (let i = 0 ; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song'+i);
+        if (songId) {
+            //Get the Song Title
+            console.log("Song")
+            const songTitle = document.getElementById('songTitle'+i).value;
+            let songName = await cleanName(songTitle)+i;
+            let audioInput = document.getElementById("songFile"+i);
+            let audioFile = audioInput.files[0];
+
+            zip.file(`assets/minecraft/sounds/records/music_disc_${songName}.ogg`, audioFile)
+        }
+        else {
+            console.log(`SONG ID : ${i} Removed`)
+        }
+    }
+}
+
+//Generate Custom Model Data
+async function generateCustomModelData(zip) {
+    console.log("Custom Model Data")
+    //Create the Custom Model Data
+    let data = {
+        "model": {
+          "type": "select",
+          "property": "custom_model_data",
+          "fallback": {
+            "type": "model",
+            "model": "item/music_disc_13"
+          },
+          "cases": [
+          ]
+        }
+      };
+    for (let i = 0 ; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song'+i);
+        if (songId) {
+            //Create the model File
+            let discTextureInput = document.getElementById('songImageInput'+i);
+            let discTexture = discTextureInput.files[0];
+            let discTextureName = await cleanName(discTexture.name) + i
+
+            const TextureModelJson = {
+                parent: "minecraft:item/generated",
+                textures: {
+                  layer0: "item/"+discTextureName
+                }
+              };
+
+            console.log(discTexture)
+
+            const discTextureModelJson = JSON.stringify(TextureModelJson, null, 2);
+            zip.file(`assets/minecraft/models/item/${discTextureName}.json`, discTextureModelJson);
+            zip.file(`assets/minecraft/textures/item/${discTextureName}.png`, discTexture);
+
+            // Define the new case you want to add
+            let newCase = {
+                "when": discTextureName,
+                "model": {
+                "type": "model",
+                "model": "item/"+discTextureName
+                }
+            };
+            
+            // Add the new case to the 'cases' array
+            data.model.cases.push(newCase);
+        }
+        else {
+            console.log(`SONG ID : ${i} Removed`)
+        }
+    }
+    const jsonCMD = JSON.stringify(data, null, 2);
+    zip.file(`assets/minecraft/items/music_disc_13.json`, jsonCMD);
+    
+}
+
 
 //Loading Animation
-
 function loadingAnimationActivate () {
     const loader = document.getElementById('loader');
     loader.style.display = 'block'; // Show loader
@@ -189,6 +345,28 @@ async function fetchPackImage(zip) {
         const arrayBuffer = await response.arrayBuffer();
         zip.file('pack.png', arrayBuffer);
     }
+}
+
+//Mc Function
+async function createMcFunction(zip,name,modelName){
+    for (let i = 0 ; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song'+i);
+        if (songId) {
+            //Get the Song Title
+            const songTitle = document.getElementById('songTitle'+i).value;
+            //Create the model File
+            let discTextureInput = document.getElementById('songImageInput'+i);
+            let discTexture = discTextureInput.files[0];
+            let discTextureName = await cleanName(discTexture.name) + i
+            let name = await cleanName(songTitle)+i
+            const textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${discTextureName}"]}]`;
+            zip.file(`data/new_music/function/${name}.mcfunction`, textContent);
+        }
+        else {
+            console.log(`SONG ID : ${i} Removed`)
+        }
+    }
+
 }
 
 //Pack Description In-Game
@@ -228,3 +406,12 @@ function removeFileExtension(fileName) {
         return fileName.substring(0, lastDotIndex);
     }
 }
+
+async function cleanName(dirtyName) {
+    const dirt = dirtyName ;
+    const dust = removeFileExtension(dirt);
+    const stone = dust.replace(unwantedCharactersPattern,'_')
+    const cleanedName = stone.toLowerCase()
+    return cleanedName
+}
+
