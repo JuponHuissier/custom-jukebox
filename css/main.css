@@ -241,3 +241,15 @@ body {
     width: auto;
     height: auto;
 }
+
+.help-link {
+
+    color: rgb(185, 192, 255);
+    
+}
+
+.help-link:visited {
+
+    color: rgb(142, 125, 201);
+    
+}
