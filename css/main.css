@@ -227,3 +227,17 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+.step {
+    margin: 10vh;
+    list-style-type: none;
+    border: #555;
+    border-top: solid;
+}
+
+.step img {
+    max-width: 80vw;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+}

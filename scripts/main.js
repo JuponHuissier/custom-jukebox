@@ -285,27 +285,28 @@ async function generateCustomModelData(zip) {
             //Create the model File
             let discTextureInput = document.getElementById('songImageInput'+i);
             let discTexture = discTextureInput.files[0];
-            let discTextureName = await cleanName(discTexture.name) + i
+            const songTitle = document.getElementById('songTitle'+i).value;
+            let songName = await cleanName(songTitle)+i;
 
             const TextureModelJson = {
                 parent: "minecraft:item/generated",
                 textures: {
-                  layer0: "item/"+discTextureName
+                  layer0: "item/"+songName
                 }
               };
 
             console.log(discTexture)
 
             const discTextureModelJson = JSON.stringify(TextureModelJson, null, 2);
-            zip.file(`assets/minecraft/models/item/${discTextureName}.json`, discTextureModelJson);
-            zip.file(`assets/minecraft/textures/item/${discTextureName}.png`, discTexture);
+            zip.file(`assets/minecraft/models/item/${songName}.json`, discTextureModelJson);
+            zip.file(`assets/minecraft/textures/item/${songName}.png`, discTexture);
 
             // Define the new case you want to add
             let newCase = {
-                "when": discTextureName,
+                "when": songName,
                 "model": {
                 "type": "model",
-                "model": "item/"+discTextureName
+                "model": "item/"+songName
                 }
             };
             
@@ -354,12 +355,8 @@ async function createMcFunction(zip,name,modelName){
         if (songId) {
             //Get the Song Title
             const songTitle = document.getElementById('songTitle'+i).value;
-            //Create the model File
-            let discTextureInput = document.getElementById('songImageInput'+i);
-            let discTexture = discTextureInput.files[0];
-            let discTextureName = await cleanName(discTexture.name) + i
-            let name = await cleanName(songTitle)+i
-            const textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${discTextureName}"]}]`;
+            let name = await cleanName(songTitle)+i;
+            const textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;
             zip.file(`data/new_music/function/${name}.mcfunction`, textContent);
         }
         else {
