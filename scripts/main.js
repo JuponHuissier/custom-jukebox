@@ -1,5 +1,26 @@
 let musicDiscIndexId = 0;
 
+  // Get references to the input and label
+  const toggle = document.getElementById('toggle');
+  const label = document.getElementById('toggle-label');
+
+  // Function to update the label text based on toggle state
+  function updateLabel() {
+    if (toggle.checked) {
+      label.textContent = '1.21.4+';
+      label.setAttribute("mc_version","1.21.4")
+    } else {
+      label.textContent = '1.21';
+      label.setAttribute("mc_version","1.21")
+    }
+  }
+
+  // Add event listener to update text when the toggle changes
+  toggle.addEventListener('change', updateLabel);
+
+  // Initial call to set the correct label text
+  updateLabel();
+
 function addMusicDisc(){
     const musicDiscContainer = document.getElementById('playlist-div');
 
@@ -144,6 +165,8 @@ async function download() { //Start
     //Creating the Zip
     const zip = new JSZip();
     const packName = document.getElementById('packTitle').value;
+    const label = document.getElementById('toggle-label');
+    const mc_version = label.getAttribute("mc_version")
     try {
         await fetchPackImage(zip);//Fetch Pack Icon
 
@@ -155,9 +178,9 @@ async function download() { //Start
 
         await fetchSoundFile(zip);//Create the assets for minecraft
 
-        await generateCustomModelData(zip);
+        await generateCustomModelData(zip, mc_version);
 
-        await createMcFunction(zip,);
+        await createMcFunction(zip, mc_version);
         // Generate and download ZIP file
         const content = await zip.generateAsync({ type: "blob" });
         const link = document.createElement('a');
@@ -264,10 +287,12 @@ async function fetchSoundFile(zip) {
 }
 
 //Generate Custom Model Data
-async function generateCustomModelData(zip) {
+async function generateCustomModelData(zip, mc_version) {
     console.log("Custom Model Data")
+    let data
     //Create the Custom Model Data
-    let data = {
+    if (mc_version == "1.21.4")
+    {data = {
         "model": {
           "type": "select",
           "property": "custom_model_data",
@@ -278,6 +303,17 @@ async function generateCustomModelData(zip) {
           "cases": [
           ]
         }
+      };}
+      else {
+        data = {
+            "parent": "item/generated",
+            "textures": {
+                "layer0": "item/music_disc_13"
+            },
+            
+            "overrides": [
+            ]
+        };
       };
     for (let i = 0 ; i < musicDiscIndexId; i++) {
         const songId = document.getElementById('song'+i);
@@ -287,8 +323,8 @@ async function generateCustomModelData(zip) {
             let discTexture = discTextureInput.files[0];
             const songTitle = document.getElementById('songTitle'+i).value;
             let songName = await cleanName(songTitle)+i;
-
-            const TextureModelJson = {
+            
+            let TextureModelJson = {
                 parent: "minecraft:item/generated",
                 textures: {
                   layer0: "item/"+songName
@@ -298,10 +334,18 @@ async function generateCustomModelData(zip) {
             console.log(discTexture)
 
             const discTextureModelJson = JSON.stringify(TextureModelJson, null, 2);
+            if (mc_version=="1.21.4")
+            {
             zip.file(`assets/minecraft/models/item/${songName}.json`, discTextureModelJson);
             zip.file(`assets/minecraft/textures/item/${songName}.png`, discTexture);
+            }
+            else {
+            zip.file(`assets/minecraft/models/item/${songName}.json`, discTextureModelJson);
+            zip.file(`assets/minecraft/textures/item/${songName}.png`, discTexture);
+            }
 
             // Define the new case you want to add
+            if (mc_version == "1.21.4"){
             let newCase = {
                 "when": songName,
                 "model": {
@@ -312,13 +356,23 @@ async function generateCustomModelData(zip) {
             
             // Add the new case to the 'cases' array
             data.model.cases.push(newCase);
+            }
+            else {
+                let newOverride =
+                    {"predicate": {"custom_model_data":i+37000}, "model": `item/${songName}`}
+                data.overrides.push(newOverride)
+            }
         }
         else {
             console.log(`SONG ID : ${i} Removed`)
         }
     }
     const jsonCMD = JSON.stringify(data, null, 2);
-    zip.file(`assets/minecraft/items/music_disc_13.json`, jsonCMD);
+    if (mc_version == "1.21.4")
+    {zip.file(`assets/minecraft/item/music_disc_13.json`, jsonCMD);}
+    else {
+        zip.file(`assets/minecraft/models/item/music_disc_13.json`, jsonCMD);
+    }
     
 }
 
@@ -349,14 +403,19 @@ async function fetchPackImage(zip) {
 }
 
 //Mc Function
-async function createMcFunction(zip,name,modelName){
+async function createMcFunction(zip,mc_version){
     for (let i = 0 ; i < musicDiscIndexId; i++) {
         const songId = document.getElementById('song'+i);
         if (songId) {
             //Get the Song Title
             const songTitle = document.getElementById('songTitle'+i).value;
             let name = await cleanName(songTitle)+i;
-            const textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;
+            let textContent
+            if (mc_version == "1.21.4")
+            {textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;}
+            else {
+                textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data=${i+37000}]`;
+            }
             zip.file(`data/new_music/function/${name}.mcfunction`, textContent);
         }
         else {
