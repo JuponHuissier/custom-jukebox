@@ -369,7 +369,7 @@ async function generateCustomModelData(zip, mc_version) {
     }
     const jsonCMD = JSON.stringify(data, null, 2);
     if (mc_version == "1.21.4")
-    {zip.file(`assets/minecraft/item/music_disc_13.json`, jsonCMD);}
+    {zip.file(`assets/minecraft/items/music_disc_13.json`, jsonCMD);}
     else {
         zip.file(`assets/minecraft/models/item/music_disc_13.json`, jsonCMD);
     }
