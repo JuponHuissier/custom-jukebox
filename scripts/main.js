@@ -10,7 +10,7 @@ let musicDiscIndexId = 0;
       label.textContent = '1.21.4+';
       label.setAttribute("mc_version","1.21.4")
     } else {
-      label.textContent = '1.21';
+      label.textContent = '1.21-3';
       label.setAttribute("mc_version","1.21")
     }
   }
