@@ -1,25 +1,29 @@
 let musicDiscIndexId = 0;
 
   // Get references to the input and label
-  const toggle = document.getElementById('toggle');
-  const label = document.getElementById('toggle-label');
-
-  // Function to update the label text based on toggle state
-  function updateLabel() {
-    if (toggle.checked) {
-      label.textContent = '1.21.4+';
-      label.setAttribute("mc_version","1.21.4")
-    } else {
-      label.textContent = '1.21-3';
-      label.setAttribute("mc_version","1.21")
-    }
-  }
-
-  // Add event listener to update text when the toggle changes
-  toggle.addEventListener('change', updateLabel);
-
-  // Initial call to set the correct label text
-  updateLabel();
+  const toggle = document.getElementById("triple-toggle");
+  const knob = toggle.querySelector(".toggle-knob");
+  const label = document.getElementById("selected-label");
+  const options = ["1.21.1-1.21.3", "1.21.4", "1.21.5+"];
+  const mc_versions = ["1.21.1-1.21.3", "1.21.4", "1.21.4"];
+  let state = 0;
+  
+  const updateToggle = () => {
+    console.log(state)
+      knob.style.transform = `translateX(${state * 60}px)`;
+      label.textContent = options[state];
+      label.setAttribute("mc_version", mc_versions[state]);
+      label.setAttribute("data-index",  state);
+  };
+  
+  toggle.addEventListener("click", () => {
+      state = (state + 1) % 3;
+      updateToggle();
+  });
+  
+  updateToggle();
+  
+    
 
 function addMusicDisc(){
     const musicDiscContainer = document.getElementById('playlist-div');
@@ -165,8 +169,9 @@ async function download() { //Start
     //Creating the Zip
     const zip = new JSZip();
     const packName = document.getElementById('packTitle').value;
-    const label = document.getElementById('toggle-label');
-    const mc_version = label.getAttribute("mc_version")
+    const label = document.getElementById('selected-label');
+    const mc_version = label.getAttribute("mc_version");
+    const dataIndex = label.getAttribute("data-index");
     try {
         await fetchPackImage(zip);//Fetch Pack Icon
 
@@ -180,7 +185,7 @@ async function download() { //Start
 
         await generateCustomModelData(zip, mc_version);
 
-        await createMcFunction(zip, mc_version);
+        await createMcFunction(zip, dataIndex);
         // Generate and download ZIP file
         const content = await zip.generateAsync({ type: "blob" });
         const link = document.createElement('a');
@@ -403,7 +408,7 @@ async function fetchPackImage(zip) {
 }
 
 //Mc Function
-async function createMcFunction(zip,mc_version){
+async function createMcFunction(zip,dataIndex){
     for (let i = 0 ; i < musicDiscIndexId; i++) {
         const songId = document.getElementById('song'+i);
         if (songId) {
@@ -411,10 +416,13 @@ async function createMcFunction(zip,mc_version){
             const songTitle = document.getElementById('songTitle'+i).value;
             let name = await cleanName(songTitle)+i;
             let textContent
-            if (mc_version == "1.21.4")
+            if (dataIndex == "1")
             {textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;}
-            else {
+            if (dataIndex == "0"){
                 textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data=${i+37000}]`;
+            }
+            if (dataIndex == "2"){
+                textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable="new_music:${name}",minecraft:custom_model_data={strings:["${name}"]}]`;
             }
             zip.file(`data/new_music/function/${name}.mcfunction`, textContent);
         }

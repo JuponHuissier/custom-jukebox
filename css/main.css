@@ -82,54 +82,66 @@ body {
     display: flex;
     align-items: center;
 }
-.toggle-button {
-    margin-top: 2vh;
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: inline-block;
-    width: 100px;
-    height: 40px;
-    border-radius: 40px;
-    background-color: #555;
-    cursor: pointer;
-    transition: background-color 0.4s;
-  }
+.toggle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+    position: relative;
+}
 
-  .toggle-button input {
-    display: none; /* Hide the checkbox */
-  }
-
-  .toggle-circle {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background-color: white;
-    transition: transform 0.4s;
-  }
-
-  .toggle-button input:checked + .toggle-circle {
-    transform: translateX(60px); /* Move the circle to the right */
-  }
-
-  .toggle-label {
-    position: absolute;
-    top: 50%;
-    left: 50px;
-    transform: translateY(-50%);
-    font-size: 16px;
+.selected-label {
+    font-size: 18px;
     font-weight: bold;
     color: white;
-    pointer-events: none;
-    transition: left 0.4s;
-  }
+    margin-bottom: 10px;
+}
 
-  .toggle-button input:checked ~ .toggle-label {
-    left: 10px;
-  }
+.toggle-wrapper {
+    position: absolute; /* Position the toggle-wrapper absolutely within its parent */
+    top: 10px; /* Adjust the distance from the top */
+    right: 10px; /* Adjust the distance from the right */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0; /* Remove the previous margin-top */
+}
+
+.triple-toggle {
+    position: relative;
+    width: 180px;
+    height: 40px;
+    background-color: #555;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+}
+
+.toggle-option {
+    flex: 1;
+    text-align: center;
+    z-index: 1;
+}
+
+.toggle-knob {
+    position: absolute;
+    top: 3px;
+    width: 54px;
+    height: 34px;
+    border-radius: 34px;
+    background-color: white;
+    transition: transform 0.3s;
+    z-index: 0;
+}
+
+
 
 .text-container {
     margin-left: 2vw;
