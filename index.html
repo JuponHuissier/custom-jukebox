@@ -77,6 +77,10 @@
     <div class="loading-bar-container">
         <div class="loading-bar"></div>
     </div>
+    <input type="file" id="importPack" accept=".zip" style="display: none;" onchange="importPack(event)">
+    <button class="import-button" onclick="document.getElementById('importPack').click()">
+        Import Pack
+    </button>
     <button class="download-button" onclick="download()">
         Download
     </button>

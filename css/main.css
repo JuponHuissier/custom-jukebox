@@ -249,6 +249,26 @@ body {
     position: absolute;
     bottom: 0.5vh;
     right: 0;
+    display: flex; /* Use flexbox to align buttons horizontally */
+    flex-direction: row; /* Ensure buttons are side by side */
+    gap: 1vw; /* Add spacing between buttons */
+}
+
+.import-button {
+    text-decoration: none;
+    width: 10vw;
+    padding: 0.5vh;
+    color: #f3f3f3;
+    border: solid;
+    border-radius: 2vh;
+    border-color: #333;
+    background-color: #333;
+    display: block;
+}
+
+.import-button:hover {
+    background-color: #555;
+    transition: background-color 0.3s ease;
 }
 
 .download-button {
@@ -262,6 +282,7 @@ body {
     background-color: #333;
     display: block;
 }
+
 .download-button:hover {
     background-color: #555;
     transition: background-color 0.3s ease;
@@ -313,4 +334,22 @@ body {
 
     color: rgb(142, 125, 201);
     
+}
+
+.import-button {
+    text-decoration: none;
+    width: 10vw;
+    padding: 0.5vh;
+    color: #f3f3f3;
+    border: solid;
+    border-radius: 2vh;
+    border-color: #333;
+    background-color: #333;
+    display: block;
+    margin-right: 1vw; /* Add spacing between buttons */
+}
+
+.import-button:hover {
+    background-color: #555;
+    transition: background-color 0.3s ease;
 }

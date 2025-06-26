@@ -58,10 +58,13 @@
 }
 
 .song-image-container {
+    aspect-ratio: 1 / 1;
     flex: 1;
     width: 50%;
     background-color: rgb(3, 2, 3);
     padding-top:50%;
+    max-width: 7rem;
+    max-height: 7rem;
     position: relative;
 }
 .song-image {
@@ -79,6 +82,16 @@
     background-color: #555;
     border-radius: 0.5vw;
     color: white;
+}
+
+.animated-frames-input {
+    width: 6rem;
+    color: rgb(255, 255, 255);
+}
+
+.animated-frames-input::placeholder {
+    font-weight: lighter;
+    color: rgb(255, 255, 255);
 }
 
 .song-file-label:hover {

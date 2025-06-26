@@ -23,64 +23,144 @@ let musicDiscIndexId = 0;
   
   updateToggle();
   
-    
+// Enable sorting for playlist-div
+function enableSorting() {
+    const playlistDiv = document.getElementById('playlist-div');
+    const songs = playlistDiv.querySelectorAll('.song');
 
-function addMusicDisc(){
+    songs.forEach(song => {
+        song.setAttribute('draggable', true);
+
+        song.addEventListener('dragstart', (event) => {
+            event.dataTransfer.setData('text/plain', song.id);
+            song.classList.add('dragging');
+        });
+
+        song.addEventListener('dragend', () => {
+            song.classList.remove('dragging');
+        });
+    });
+
+    playlistDiv.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        const draggingElement = playlistDiv.querySelector('.dragging');
+        const afterElement = getDragAfterElement(playlistDiv, event.clientY);
+        if (afterElement == null) {
+            playlistDiv.appendChild(draggingElement);
+        } else {
+            playlistDiv.insertBefore(draggingElement, afterElement);
+        }
+    });
+}
+
+// Helper function to determine the element after which the dragged element should be placed
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.song:not(.dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+// Call enableSorting to activate the sorting functionality
+
+function addMusicDisc(songData = null) {
     const musicDiscContainer = document.getElementById('playlist-div');
 
     // Create a new music-disc-input-div element
     const newMusicDisc = document.createElement('div');
     newMusicDisc.classList.add('song');
-    newMusicDisc.id = 'song'+ musicDiscIndexId
+    newMusicDisc.id = 'song' + musicDiscIndexId;
+
+    // Use songData if provided, otherwise use default values
+    const title = songData?.title || "Title";
+    const author = songData?.author || "Author";
+    const fileBlob = songData?.fileBlob || null;
+    const imageBlob = songData?.imageBlob || null;
+    const length = songData?.length || 0;
+
+    const imageUrl = imageBlob ? URL.createObjectURL(imageBlob) : '';
+    const fileName = fileBlob ? fileBlob.name : 'No File';
+    const formattedLength = `${Math.floor(length / 60)}:${Math.floor(length % 60).toString().padStart(2, '0')}`;
 
     // Add inner HTML for the new music-disc-input-div
     newMusicDisc.innerHTML = `
-            <li class="song-image-li song-item">
-                <div class="song-image-container">
-                    <label for="songImageInput${musicDiscIndexId}" class="song-image-label">
-                        <div class="song-image" id="songImagePreview${musicDiscIndexId}">
-                            <span class="upload-text">Upload Image</span>
-                        </div>
-                    </label>
-                    <input type="file" id="songImageInput${musicDiscIndexId}" name="song-image-input" class="song-image-input" accept="image/png" style="display: none;" onchange="showImage(event, 'songImagePreview${musicDiscIndexId}', true)"/>
-                </div>
-            </li>
-            <li class="song-title-li song-item">
-                <div class="song-title">
-                    <input type="text" class="song-title-input text-input" id="songTitle${musicDiscIndexId}" placeholder="Enter title" value="Title">
-                </div>
-            </li>
-            <li class="song-author-li song-item">
-                <div class="song-author">
-                    <input type="text" class="song-author-input text-input" id="songAuthor${musicDiscIndexId}" placeholder="Enter author" value="Author">
-                </div>
-            </li>
-            <li class="song-file-li song-item">
-                <div class="song-file">
-                    <label for="songFile${musicDiscIndexId}" class="song-file-label">
-                        No File &#10515
-                    </label>
-                    <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/ogg" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
-                </div>
-            </li>
-            <li class="song-length-li song-item">
-                <div class="song-length" id="songFileLength${musicDiscIndexId}">
-                    00:00
-                </div>
-            </li>
-            <li class="song-remove song-item">
-                <div id="removeSong" class="remove-song-button">
-                    <span class="cross-sign" onclick="removeMusicDisc('song${musicDiscIndexId}')">⨉</span>
-                </div>
-            </li>
+        <li class="song-image-li song-item" style="display: flex; align-items: center; gap: 12px;">
+            <div class="song-image-container">
+                <label for="songImageInput${musicDiscIndexId}" class="song-image-label">
+                    <div class="song-image" id="songImagePreview${musicDiscIndexId}" style="background-image: url('${imageUrl}')">
+                        <span class="upload-text">${imageBlob ? '' : 'Upload Image'}</span>
+                    </div>
+                </label>
+                <input type="file" id="songImageInput${musicDiscIndexId}" name="song-image-input" class="song-image-input" accept="image/png" style="display: none;" onchange="showImage(event, 'songImagePreview${musicDiscIndexId}', true)"/>
+            </div>
+            <!-- Animated Spritesheet Toggle placed to the right of the image, outside the container -->
+            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; white-space: nowrap;">
+                    <input type="checkbox" id="animatedToggle${musicDiscIndexId}" class="animated-toggle" style="margin: 0;">
+                    Animated
+                </label>
+                <input type="number" id="animatedFrames${musicDiscIndexId}" class="animated-frames-input text-input" placeholder="Frametime" min="1" style="display: none;" />
+            </div>
+        </li>
+        <li class="song-title-li song-item">
+            <div class="song-title">
+                <input type="text" class="song-title-input text-input" id="songTitle${musicDiscIndexId}" placeholder="Enter title" value="${title}">
+            </div>
+        </li>
+        <li class="song-author-li song-item">
+            <div class="song-author">
+                <input type="text" class="song-author-input text-input" id="songAuthor${musicDiscIndexId}" placeholder="Enter author" value="${author}">
+            </div>
+        </li>
+        <li class="song-file-li song-item">
+            <div class="song-file">
+                <label for="songFile${musicDiscIndexId}" class="song-file-label">
+                    ${fileName}
+                </label>
+                <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/ogg" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
+            </div>
+        </li>
+        <li class="song-length-li song-item">
+            <div class="song-length" id="songFileLength${musicDiscIndexId}" song_length="${length}">
+                ${formattedLength}
+            </div>
+        </li>
+        <li class="song-remove song-item">
+            <div id="removeSong" class="remove-song-button">
+                <span class="cross-sign" onclick="removeMusicDisc('song${musicDiscIndexId}')">⨉</span>
+            </div>
+        </li>
     `;
 
-    //Add 1 to musicDiscIndexId
-    musicDiscIndexId = musicDiscIndexId + 1
+    // Increment the musicDiscIndexId
+    musicDiscIndexId++;
+
     // Append the new music-disc-input-div to the container
     musicDiscContainer.appendChild(newMusicDisc);
 
+    // Enable sorting after adding the new song
+    enableSorting();
+
+    // Show/hide number input when animated toggle is checked
+    const animatedToggle = newMusicDisc.querySelector('.animated-toggle');
+    const animatedFramesInput = newMusicDisc.querySelector('.animated-frames-input');
+    if (animatedToggle && animatedFramesInput) {
+        animatedToggle.addEventListener('change', function() {
+            animatedFramesInput.style.display = this.checked ? 'block' : 'none';
+        });
+    }
 }
+
+// Initialize sorting when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    enableSorting();
+});
 
 //Remove Song from Playlist
 function removeMusicDisc(songId) {
@@ -162,30 +242,29 @@ function updateAudioLength(file, songIndex) {
 const wantedCharacters = 'a-zA-Z0-9';
 const unwantedCharactersPattern = new RegExp(`[^${wantedCharacters}]`, 'g');
 
-async function download() { //Start
-    //Loading Animation
+async function download() { 
+    // Start loading animation
     loadingAnimationActivate();
 
-    //Creating the Zip
+    // Create the ZIP file
     const zip = new JSZip();
     const packName = document.getElementById('packTitle').value;
     const label = document.getElementById('selected-label');
     const mc_version = label.getAttribute("mc_version");
     const dataIndex = label.getAttribute("data-index");
+
     try {
-        await fetchPackImage(zip);//Fetch Pack Icon
+        await fetchPackImage(zip); // Fetch pack icon
+        await fecthPackInfo(zip); // Fetch pack description
+        await createMusicDiscsDatapackFile(zip); // Create disc data files
+        await createSoundJSON(zip); // Create sounds.json file
+        await fetchSoundFile(zip); // Add sound assets
+        await generateCustomModelData(zip, mc_version); // Generate custom model data
+        await createMcFunction(zip, dataIndex); // Create Minecraft functions
 
-        await fecthPackInfo(zip);//Fetch Pack Description 
+        // Create the manifest file
+        await createManifestFile(zip);
 
-        await createMusicDiscsDatapackFile(zip);//Create Every Disc
-
-        await createSoundJSON(zip);//Create sounds.json file
-
-        await fetchSoundFile(zip);//Create the assets for minecraft
-
-        await generateCustomModelData(zip, mc_version);
-
-        await createMcFunction(zip, dataIndex);
         // Generate and download ZIP file
         const content = await zip.generateAsync({ type: "blob" });
         const link = document.createElement('a');
@@ -196,10 +275,47 @@ async function download() { //Start
         console.error('Error generating ZIP file:', error);
         // Handle error appropriately
     } finally {
-        loadingAnimationDeactivate();
+        loadingAnimationDeactivate(); // Stop loading animation
     }
 }
+// Create Manifest File
+async function createManifestFile(zip) {
+    const packTitle = document.getElementById('packTitle').value;
+    const packDescription = document.getElementById('packDescription').value.replace(/\\n/g, '\n');
+    const packVersion = parseInt(document.getElementById('packVersion').value, 10);
+    const packIconPath = 'pack.png'; // Path to the pack icon in the ZIP
 
+    const songs = [];
+    for (let i = 0; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song' + i);
+        if (songId) {
+            const songTitle = document.getElementById('songTitle' + i).value;
+            const songAuthor = document.getElementById('songAuthor' + i).value;
+            const songLengthDiv = document.getElementById('songFileLength' + i);
+            const songLength = Number(songLengthDiv.getAttribute("song_length"));
+            const songFilePath = `assets/minecraft/sounds/records/music_disc_${await cleanName(songTitle) + i}.ogg`;
+            const songImagePath = `assets/minecraft/textures/item/${await cleanName(songTitle) + i}.png`;
+
+            songs.push({
+                title: songTitle,
+                author: songAuthor,
+                length: songLength,
+                filePath: songFilePath,
+                imagePath: songImagePath
+            });
+        }
+    }
+
+    const manifest = {
+        packTitle: packTitle,
+        packDescription: packDescription,
+        packVersion: packVersion,
+        packIcon: packIconPath,
+        songs: songs
+    };
+
+    zip.file("manifest.json", JSON.stringify(manifest, null, 2));
+}
 //Generating Disc Data
 
 async function createMusicDiscsDatapackFile(zip) {
@@ -270,23 +386,25 @@ async function createSoundJSON(zip) {
     zip.file('assets/minecraft/sounds.json', musicDiscDataJson);
 }
 
-//Generate Assets for Minecraft
 async function fetchSoundFile(zip) {
-    console.log("Sounds Assets")
-    for (let i = 0 ; i < musicDiscIndexId; i++) {
-        const songId = document.getElementById('song'+i);
+    console.log("Sounds Assets");
+    for (let i = 0; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song' + i);
         if (songId) {
-            //Get the Song Title
-            console.log("Song")
-            const songTitle = document.getElementById('songTitle'+i).value;
-            let songName = await cleanName(songTitle)+i;
-            let audioInput = document.getElementById("songFile"+i);
-            let audioFile = audioInput.files[0];
+            // Get the Song Title
+            const songTitle = document.getElementById('songTitle' + i).value;
+            const songFileInput = document.getElementById("songFile" + i);
+            const songFile = songFileInput.files[0];
 
-            zip.file(`assets/minecraft/sounds/records/music_disc_${songName}.ogg`, audioFile)
-        }
-        else {
-            console.log(`SONG ID : ${i} Removed`)
+            if (!songFile) {
+                console.error(`No file selected for song: ${songTitle}`);
+                continue;
+            }
+
+            const songName = await cleanName(songTitle) + i;
+            zip.file(`assets/minecraft/sounds/records/music_disc_${songName}.ogg`, songFile);
+        } else {
+            console.log(`SONG ID : ${i} Removed`);
         }
     }
 }
@@ -320,6 +438,7 @@ async function generateCustomModelData(zip, mc_version) {
             ]
         };
       };
+      
     for (let i = 0 ; i < musicDiscIndexId; i++) {
         const songId = document.getElementById('song'+i);
         if (songId) {
@@ -362,10 +481,26 @@ async function generateCustomModelData(zip, mc_version) {
             // Add the new case to the 'cases' array
             data.model.cases.push(newCase);
             }
+            
             else {
                 let newOverride =
                     {"predicate": {"custom_model_data":i+37000}, "model": `item/${songName}`}
                 data.overrides.push(newOverride)
+            }
+            const animatedToggle = document.getElementById('animatedToggle' + i);
+            if (animatedToggle && animatedToggle.checked) {
+                const frametimeInput = document.getElementById('animatedFrames' + i);
+                let frametime = frametimeInput ? Number(frametimeInput.value) : null;
+                if (!frametime || isNaN(frametime)) {
+                    frametime = 3;
+                }
+                // Create animation JSON file at the same location as the song texture
+                const animationJson = {
+                    animation: {
+                        frametime: frametime
+                    }
+                };
+                zip.file(`assets/minecraft/textures/item/${songName}.png.mcmeta`, JSON.stringify(animationJson, null, 2));
             }
         }
         else {
@@ -441,16 +576,8 @@ async function fecthPackInfo(zip) {
     {
         pack: {
           pack_format: packVersion,
-          supported_formats: [34, 45],
+          supported_formats: [34, 79],
           description: packDescription.replace(/\\n/g, '\n')
-        },
-        overlays: {
-            entries: [
-                {
-                    formats: {min_inclusive: 18, max_inclusive: 2147483647},
-                    directory: "overlay_18"
-                }
-            ]
         }
     }
 
@@ -479,3 +606,95 @@ async function cleanName(dirtyName) {
     return cleanedName
 }
 
+async function importPack(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const zip = new JSZip();
+    const contents = await zip.loadAsync(file);
+
+    // Read the manifest file
+    const manifestFile = contents.file("manifest.json");
+    if (!manifestFile) {
+        console.error("Manifest file not found in the ZIP.");
+        return;
+    }
+
+    const manifest = JSON.parse(await manifestFile.async("string"));
+
+    // Update pack metadata
+    document.getElementById('packTitle').value = manifest.packTitle;
+    document.getElementById('packDescription').value = manifest.packDescription.replace(/\n/g, '\\n');
+    document.getElementById('packVersion').value = manifest.packVersion;
+
+    // Update pack icon
+    const packIcon = contents.file(manifest.packIcon);
+    if (packIcon) {
+        const iconBlob = await packIcon.async("blob");
+        const iconUrl = URL.createObjectURL(iconBlob);
+        document.getElementById('imagePreview').style.backgroundImage = `url(${iconUrl})`;
+
+        // Simulate manually adding the pack icon file
+        const packIconInput = document.getElementById('pack-icon-input');
+        const packIconFile = new File([iconBlob], "pack.png", { type: "image/png" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(packIconFile);
+        packIconInput.files = dataTransfer.files;
+    }
+
+    // Add songs to playlist
+    manifest.songs.forEach(async (song, index) => {
+        const songFile = contents.file(song.filePath);
+        const songImage = contents.file(song.imagePath);
+
+        // Check if song file exists
+        if (!songFile) {
+            console.error(`Song file not found: ${song.filePath}`);
+            return;
+        }
+
+        // Check if song image exists
+        if (!songImage) {
+            console.error(`Song image not found: ${song.imagePath}`);
+            return;
+        }
+
+        // Create Blob objects with correct MIME types
+        const songBlob = new Blob([await songFile.async("arraybuffer")], { type: "audio/ogg" });
+        const imageBlob = new Blob([await songImage.async("arraybuffer")], { type: "image/png" });
+
+        // Simulate manually adding the song file and image file
+        const songFileInput = document.createElement('input');
+        songFileInput.type = 'file';
+        const songFileObject = new File([songBlob], `music_disc_${index}.ogg`, { type: "audio/ogg" });
+        const songFileDataTransfer = new DataTransfer();
+        songFileDataTransfer.items.add(songFileObject);
+        songFileInput.files = songFileDataTransfer.files;
+
+        const songImageInput = document.createElement('input');
+        songImageInput.type = 'file';
+        const songImageObject = new File([imageBlob], `song_image_${index}.png`, { type: "image/png" });
+        const songImageDataTransfer = new DataTransfer();
+        songImageDataTransfer.items.add(songImageObject);
+        songImageInput.files = songImageDataTransfer.files;
+
+        const songData = {
+            title: song.title,
+            author: song.author,
+            length: Math.floor(song.length), // Round down the length
+            fileBlob: songFileObject,
+            imageBlob: songImageObject
+        };
+
+        addMusicDisc(songData); // Use the updated addMusicDisc function
+
+        // Attach the simulated file inputs to the DOM
+        const songElement = document.getElementById(`song${musicDiscIndexId - 1}`);
+        const songFileInputElement = songElement.querySelector(`#songFile${musicDiscIndexId - 1}`);
+        const songImageInputElement = songElement.querySelector(`#songImageInput${musicDiscIndexId - 1}`);
+        songFileInputElement.files = songFileDataTransfer.files;
+        songImageInputElement.files = songImageDataTransfer.files;
+    });
+
+    console.log("Pack imported successfully!");
+}
