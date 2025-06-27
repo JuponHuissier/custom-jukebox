@@ -295,14 +295,30 @@ async function createManifestFile(zip) {
             const songLength = Number(songLengthDiv.getAttribute("song_length"));
             const songFilePath = `assets/minecraft/sounds/records/music_disc_${await cleanName(songTitle) + i}.ogg`;
             const songImagePath = `assets/minecraft/textures/item/${await cleanName(songTitle) + i}.png`;
-
-            songs.push({
+            // Get frametime if animated
+            let frametime = undefined;
+            let animated = false;
+            const animatedToggle = document.getElementById('animatedToggle' + i);
+            if (animatedToggle && animatedToggle.checked) {
+                animated = true;
+                const frametimeInput = document.getElementById('animatedFrames' + i);
+                frametime = frametimeInput ? Number(frametimeInput.value) : undefined;
+                if (!frametime || isNaN(frametime)) {
+                    frametime = 3;
+                }
+            }
+            const songObj = {
                 title: songTitle,
                 author: songAuthor,
                 length: songLength,
                 filePath: songFilePath,
-                imagePath: songImagePath
-            });
+                imagePath: songImagePath,
+                animated: animated
+            };
+            if (animated) {
+                songObj.frametime = frametime;
+            }
+            songs.push(songObj);
         }
     }
 
@@ -678,12 +694,15 @@ async function importPack(event) {
         songImageDataTransfer.items.add(songImageObject);
         songImageInput.files = songImageDataTransfer.files;
 
+        // Prepare songData for addMusicDisc
         const songData = {
             title: song.title,
             author: song.author,
             length: Math.floor(song.length), // Round down the length
             fileBlob: songFileObject,
-            imageBlob: songImageObject
+            imageBlob: songImageObject,
+            animated: !!song.animated,
+            frametime: song.animated ? (song.frametime || 3) : undefined
         };
 
         addMusicDisc(songData); // Use the updated addMusicDisc function
@@ -694,6 +713,19 @@ async function importPack(event) {
         const songImageInputElement = songElement.querySelector(`#songImageInput${musicDiscIndexId - 1}`);
         songFileInputElement.files = songFileDataTransfer.files;
         songImageInputElement.files = songImageDataTransfer.files;
+
+        // Set animated toggle and frametime in the DOM
+        if (songData.animated) {
+            const animatedToggle = songElement.querySelector(`#animatedToggle${musicDiscIndexId - 1}`);
+            const animatedFramesInput = songElement.querySelector(`#animatedFrames${musicDiscIndexId - 1}`);
+            if (animatedToggle) {
+                animatedToggle.checked = true;
+                if (animatedFramesInput) {
+                    animatedFramesInput.style.display = 'block';
+                    animatedFramesInput.value = songData.frametime;
+                }
+            }
+        }
     });
 
     console.log("Pack imported successfully!");
