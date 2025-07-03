@@ -246,6 +246,32 @@ async function download() {
     // Start loading animation
     loadingAnimationActivate();
 
+    // Size check before ZIP creation
+    let totalSize = 0;
+    // Add pack icon size
+    const packImageFileInput = document.getElementById('pack-icon-input');
+    const packImage = packImageFileInput.files[0];
+    if (packImage) {
+        totalSize += packImage.size;
+    }
+    // Add all song files and images
+    for (let i = 0; i < musicDiscIndexId; i++) {
+        const songFileInput = document.getElementById('songFile' + i);
+        const songImageInput = document.getElementById('songImageInput' + i);
+        if (songFileInput && songFileInput.files[0]) {
+            totalSize += songFileInput.files[0].size;
+        }
+        if (songImageInput && songImageInput.files[0]) {
+            totalSize += songImageInput.files[0].size;
+        }
+    }
+    // 900MB = 943718400 bytes
+    if (totalSize > 943718400) {
+        loadingAnimationDeactivate();
+        window.alert('The total file size exceeds 900MB. Please remove some songs or images to continue.');
+        return;
+    }
+
     // Create the ZIP file
     const zip = new JSZip();
     const packName = document.getElementById('packTitle').value;
