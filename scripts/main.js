@@ -90,6 +90,7 @@ function addMusicDisc(songData = null) {
 
     // Add inner HTML for the new music-disc-input-div
     newMusicDisc.innerHTML = `
+    <div class="song-content">
         <li class="song-image-li song-item" style="display: flex; align-items: center; gap: 12px;">
             <div class="song-image-container">
                 <label for="songImageInput${musicDiscIndexId}" class="song-image-label">
@@ -98,14 +99,6 @@ function addMusicDisc(songData = null) {
                     </div>
                 </label>
                 <input type="file" id="songImageInput${musicDiscIndexId}" name="song-image-input" class="song-image-input" accept="image/png" style="display: none;" onchange="showImage(event, 'songImagePreview${musicDiscIndexId}', true)"/>
-            </div>
-            <!-- Animated Spritesheet Toggle placed to the right of the image, outside the container -->
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; white-space: nowrap;">
-                    <input type="checkbox" id="animatedToggle${musicDiscIndexId}" class="animated-toggle" style="margin: 0;">
-                    Animated
-                </label>
-                <input type="number" id="animatedFrames${musicDiscIndexId}" class="animated-frames-input text-input" placeholder="Frametime" min="1" style="display: none;" />
             </div>
         </li>
         <li class="song-title-li song-item">
@@ -123,7 +116,7 @@ function addMusicDisc(songData = null) {
                 <label for="songFile${musicDiscIndexId}" class="song-file-label">
                     ${fileName}
                 </label>
-                <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept="audio/ogg" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
+                <input type="file" class="file-input" id="songFile${musicDiscIndexId}" accept=".ogg,audio/ogg" style="display: none;" onchange="showFileName(event, 'songFile${musicDiscIndexId}', ${musicDiscIndexId})">
             </div>
         </li>
         <li class="song-length-li song-item">
@@ -136,6 +129,24 @@ function addMusicDisc(songData = null) {
                 <span class="cross-sign" onclick="removeMusicDisc('song${musicDiscIndexId}')">⨉</span>
             </div>
         </li>
+        </div>
+        <div class="hidden-song-content">
+            <div style="margin: 2vh; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; white-space: nowrap;">
+                    <input type="checkbox" id="animatedToggle${musicDiscIndexId}" class="animated-toggle" style="margin: 0;">
+                    Animated
+                </label>
+                <input type="number" id="animatedFrames${musicDiscIndexId}" class="animated-frames-input text-input" placeholder="Frametime" min="1" style="display: none;" />
+            </div>
+
+            <div style="margin: 2vh; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; white-space: nowrap;">
+                    <input type="checkbox" id="creeperLootToggle${musicDiscIndexId}" class="creeperLoot-toggle" style="margin: 0;">
+                    Creeper Loot
+                </label>
+            </div>
+        </div>
+        
     `;
 
     // Increment the musicDiscIndexId
@@ -155,6 +166,7 @@ function addMusicDisc(songData = null) {
             animatedFramesInput.style.display = this.checked ? 'block' : 'none';
         });
     }
+
 }
 
 // Initialize sorting when the page loads
@@ -287,6 +299,7 @@ async function download() {
         await fetchSoundFile(zip); // Add sound assets
         await generateCustomModelData(zip, mc_version); // Generate custom model data
         await createMcFunction(zip, dataIndex); // Create Minecraft functions
+        await createCreeperLoot(zip, dataIndex); // Create Creeper Loot files
 
         // Create the manifest file
         await createManifestFile(zip);
@@ -609,6 +622,116 @@ async function createMcFunction(zip,dataIndex){
     }
 
 }
+//Creeper loot
+async function createCreeperLoot(zip,dataIndex) {
+    if (dataIndex != "2") {
+        console.log("Creeper Loot not supported for this version");
+        return;
+    }
+    let creeperLoot = 
+        {
+            "type": "minecraft:entity",
+            "pools": [
+                {
+                "bonus_rolls": 0.0,
+                "entries": [
+                    {
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                        "add": false,
+                        "count": {
+                            "type": "minecraft:uniform",
+                            "max": 2.0,
+                            "min": 0.0
+                        },
+                        "function": "minecraft:set_count"
+                        },
+                        {
+                        "count": {
+                            "type": "minecraft:uniform",
+                            "max": 1.0,
+                            "min": 0.0
+                        },
+                        "enchantment": "minecraft:looting",
+                        "function": "minecraft:enchanted_count_increase"
+                        }
+                    ],
+                    "name": "minecraft:gunpowder"
+                    }
+                ],
+                "rolls": 1.0
+                },
+                {
+                "bonus_rolls": 0.0,
+                "conditions": [
+                    {
+                    "condition": "minecraft:entity_properties",
+                    "entity": "attacker",
+                    "predicate": {
+                        "type": "#minecraft:skeletons"
+                    }
+                    }
+                ],
+                "entries": [
+                    {
+                    "type": "minecraft:tag",
+                    "expand": true,
+                    "name": "minecraft:creeper_drop_music_discs"
+                    }
+                ],
+                "rolls": 1.0
+                }
+            ],
+            "random_sequence": "minecraft:entities/creeper"
+        };
+    for (let i = 0 ; i < musicDiscIndexId; i++) {
+        const songId = document.getElementById('song'+i);
+        const creeperLootToggle = document.getElementById('creeperLootToggle' + i);
+        
+        if (songId && creeperLootToggle && creeperLootToggle.checked) {
+            const songTitle = document.getElementById('songTitle'+i).value;
+            let discName = await cleanName(songTitle)+i;
+            newPool = 
+            {
+                "rolls": 1,
+                "entries": [
+                    {
+                    "type": "minecraft:item",
+                    "name": "minecraft:music_disc_13",
+                    "weight": 1,
+                    "quality": 1,
+                    "conditions": [
+                        {
+                        "condition": "minecraft:entity_properties",
+                        "entity": "attacker",
+                        "predicate": {
+                            "type": "#minecraft:skeletons"
+                        }
+                        }
+                    ]
+                    }
+                ],
+                "functions": [
+                    {
+                    "function": "minecraft:set_components",
+                    "components": {
+                        "minecraft:jukebox_playable": `new_music:${discName}`,
+                        "minecraft:custom_model_data": {
+                        "strings": [
+                            `${discName}`
+                        ]
+                        }
+                    }
+                    }
+                ],
+                "conditions": []
+                };
+            };
+            creeperLoot.pools.push(newPool);
+        }
+    zip.file(`data/minecraft/loot_table/entities/creeper.json`, JSON.stringify(creeperLoot, null, 2));
+}    
 
 //Pack Description In-Game
 async function fecthPackInfo(zip) {

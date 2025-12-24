@@ -2,14 +2,39 @@
     font-family: 'Satoshi-Light';
     margin-top: 2vh;
     width: 100vw;
-    height: auto;
+    height: 12vh;
+    flex-direction: column;
     list-style-type: none;
     display: flex;
-    justify-content:space-around;
+    align-items: top;
     border: solid;
     border-color: #333;
     vertical-align: text-top;
     position: relative;
+    -webkit-transition: height 300ms ease-out; 
+}
+
+.song:hover {
+   height: 26vh;
+   -webkit-transition: height 300ms ease-in;   
+} 
+
+.song:hover .hidden-song-content {
+  display: block;
+  -webkit-transition: opacity 600ms ease-in; 
+  opacity: 1;
+}
+
+.song-content {
+  display: flex;
+  justify-content: space-around;
+}
+
+.hidden-song-content {
+  -webkit-transition: opacity 300ms ease-out;
+  font-size: 30px; 
+  opacity: 0;
+  flex-direction: column;
 }
 
 .song-item {
@@ -58,14 +83,15 @@
 }
 
 .song-image-container {
-    aspect-ratio: 1 / 1;
-    flex: 1;
-    width: 50%;
+    flex: 0 0 7rem;
+    width: 7rem;
+    height: 7rem;
     background-color: rgb(3, 2, 3);
-    padding-top:50%;
+    padding: 0;
     max-width: 7rem;
     max-height: 7rem;
     position: relative;
+    margin: 0 1rem;
 }
 .song-image {
     position: absolute;
@@ -88,7 +114,10 @@
     width: 6rem;
     color: rgb(255, 255, 255);
 }
-
+.creeperLoot-input {
+    width: 6rem;
+    color: rgb(255, 255, 255);
+}
 .animated-frames-input::placeholder {
     font-weight: lighter;
     color: rgb(255, 255, 255);
