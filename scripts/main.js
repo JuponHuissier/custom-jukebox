@@ -625,7 +625,7 @@ async function createMcFunction(zip,dataIndex){
 //Creeper loot
 async function createCreeperLoot(zip,dataIndex) {
     if (dataIndex != "2") {
-        console.log("Creeper Loot not supported for this version");
+        alert("Creeper Loot not supported for this version only for 1.21.5+");
         return;
     }
     let creeperLoot = 
