@@ -599,6 +599,7 @@ async function fetchPackImage(zip) {
 
 //Mc Function
 async function createMcFunction(zip,dataIndex){
+    let bigTextContent = `#Give all music discs to player\n`;
     for (let i = 0 ; i < musicDiscIndexId; i++) {
         const songId = document.getElementById('song'+i);
         if (songId) {
@@ -606,19 +607,24 @@ async function createMcFunction(zip,dataIndex){
             const songTitle = document.getElementById('songTitle'+i).value;
             let name = await cleanName(songTitle)+i;
             let textContent
+            
             if (dataIndex == "1")
-            {textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;}
+            {textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;
+            bigTextContent = bigTextContent + `\n#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data={strings:["${name}"]}]`;}
             if (dataIndex == "0"){
                 textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data=${i+37000}]`;
+                bigTextContent = bigTextContent + `\n#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable={song:"new_music:${name}"},minecraft:custom_model_data=${i+37000}]`;
             }
             if (dataIndex == "2"){
                 textContent = `#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable="new_music:${name}",minecraft:custom_model_data={strings:["${name}"]}]`;
+                bigTextContent = bigTextContent + `\n#give ${songTitle} to player\ngive @s minecraft:music_disc_13[minecraft:jukebox_playable="new_music:${name}",minecraft:custom_model_data={strings:["${name}"]}]`;
             }
             zip.file(`data/new_music/function/${name}.mcfunction`, textContent);
         }
         else {
             console.log(`SONG ID : ${i} Removed`)
         }
+        zip.file(`data/new_music/function/give_all_disc.mcfunction`, bigTextContent);
     }
 
 }
@@ -677,8 +683,25 @@ async function createCreeperLoot(zip,dataIndex) {
                     {
                     "type": "minecraft:tag",
                     "expand": true,
-                    "name": "minecraft:creeper_drop_music_discs"
+                    "name": "minecraft:creeper_drop_music_discs",
+                    "weight": 1,
+                    "quality": 1
                     }
+                ],
+                "rolls": 1.0
+                },
+                {
+                "bonus_rolls": 0.0,
+                "conditions": [
+                    {
+                    "condition": "minecraft:entity_properties",
+                    "entity": "attacker",
+                    "predicate": {
+                        "type": "#minecraft:skeletons"
+                    }
+                    }
+                ],
+                "entries": [
                 ],
                 "rolls": 1.0
                 }
@@ -692,44 +715,37 @@ async function createCreeperLoot(zip,dataIndex) {
         if (songId && creeperLootToggle && creeperLootToggle.checked) {
             const songTitle = document.getElementById('songTitle'+i).value;
             let discName = await cleanName(songTitle)+i;
-            newPool = 
+            newEntry = 
             {
-                "rolls": 1,
-                "entries": [
-                    {
                     "type": "minecraft:item",
+                    "components": {
+                    "minecraft:custom_model_data": {
+                        "strings": [
+                        `${discName}`
+                        ]
+                    },
+                    "minecraft:jukebox_playable": `new_music:${discName}`
+                    },
                     "name": "minecraft:music_disc_13",
                     "weight": 1,
                     "quality": 1,
-                    "conditions": [
+                    "functions": [
                         {
-                        "condition": "minecraft:entity_properties",
-                        "entity": "attacker",
-                        "predicate": {
-                            "type": "#minecraft:skeletons"
+                        "function": "minecraft:set_components",
+                        "components": {
+                            "minecraft:custom_model_data": {
+                            "strings": [
+                                `${discName}`
+                            ]
+                            },
+                            "minecraft:jukebox_playable": `new_music:${discName}`
                         }
                         }
                     ]
-                    }
-                ],
-                "functions": [
-                    {
-                    "function": "minecraft:set_components",
-                    "components": {
-                        "minecraft:jukebox_playable": `new_music:${discName}`,
-                        "minecraft:custom_model_data": {
-                        "strings": [
-                            `${discName}`
-                        ]
-                        }
-                    }
-                    }
-                ],
-                "conditions": []
                 };
-            };
-            creeperLoot.pools.push(newPool);
+            creeperLoot.pools[2].entries.push(newEntry);
         }
+    }
     zip.file(`data/minecraft/loot_table/entities/creeper.json`, JSON.stringify(creeperLoot, null, 2));
 }    
 
